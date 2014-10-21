@@ -21,6 +21,7 @@ public class MixedHyperGraph implements HyperGraph {
      * 
      * @param n number of vertices
      */
+    @SuppressWarnings("unchecked") //array of lists
     public MixedHyperGraph(int n) {
         vertexNumber = n;
         edges = new List[n][n];

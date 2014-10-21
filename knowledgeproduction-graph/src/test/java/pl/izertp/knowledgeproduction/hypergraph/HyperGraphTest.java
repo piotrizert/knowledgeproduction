@@ -13,12 +13,14 @@ public class HyperGraphTest {
     private static final int Vfrom2 = 1;
 
     private static final int Vto1 = 2;
+    
+    private static final int SIZE = 10;
 
     private HyperGraph graph;
 
     @Before
     public void setUpGraph() {
-        graph = new MixedHyperGraph(10);
+        graph = new MixedHyperGraph(SIZE);
     }
 
     @Test
@@ -38,7 +40,7 @@ public class HyperGraphTest {
     }
 
     @Test
-    public void testGetEdgeSymmetric() {
+    public void testEdgeSymmetric() {
         graph.addEdge(Vfrom1, Vfrom2, Vto1);
         assertTrue("Edge should be present", graph.getEdge(Vfrom1, Vfrom2, Vto1));
         assertTrue("Edges should be symmetric", graph.getEdge(Vfrom2, Vfrom1, Vto1));
