@@ -1,5 +1,6 @@
 package pl.izertp.knowledgeproduction.hypergraph;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -13,7 +14,9 @@ public class HyperGraphTest {
     private static final int Vfrom2 = 1;
 
     private static final int Vto1 = 2;
-    
+
+    private static final int Vto2 = 3;
+
     private static final int SIZE = 10;
 
     private HyperGraph graph;
@@ -44,6 +47,13 @@ public class HyperGraphTest {
         graph.addEdge(Vfrom1, Vfrom2, Vto1);
         assertTrue("Edge should be present", graph.getEdge(Vfrom1, Vfrom2, Vto1));
         assertTrue("Edges should be symmetric", graph.getEdge(Vfrom2, Vfrom1, Vto1));
+    }
+
+    @Test
+    public void testToVertices() {
+        graph.addEdge(Vfrom1, Vfrom2, Vto1);
+        graph.addEdge(Vfrom1, Vfrom2, Vto2);
+        assertArrayEquals("Wrong destination vertices list", graph.toVertices(Vfrom1, Vfrom2).toArray(), new Integer[] { Vto1, Vto2 });
     }
 
 }
