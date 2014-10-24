@@ -8,7 +8,7 @@ import lombok.Getter;
 import pl.izertp.knowledgeproduction.hypergraph.HyperGraph;
 import pl.izertp.knowledgeproduction.hypergraph.MixedHyperGraph;
 
-public class KnowledgeRepresentation {
+public class KnowledgeStructure {
 
     /**
      * Number of basic knowledge elements, from which all other elements can be developed.
@@ -28,15 +28,15 @@ public class KnowledgeRepresentation {
     private HyperGraph graph;
 
     /**
-     * Creates a new KnowledgeRepresentation object with random-generated knowledge HyperGraph.
+     * Creates a new KnowledgeStructure object with random-generated knowledge HyperGraph.
      * 
      * @param baseSize number of basic knowledge elements, from which all other elements can be developed
      * @param size size of the whole knowledge graph
      * @param connectionNumber maximum number of connections to a non-base element
      */
-    public KnowledgeRepresentation(int baseSize, int size, int connectionNumber) {
+    public KnowledgeStructure(int baseSize, int size, int connectionNumber) {
         if (baseSize > size) {
-            throw new IllegalArgumentException("Size of base in KnowledgeRepresentation cant be greater than size of the graph");
+            throw new IllegalArgumentException("Size of base in KnowledgeStructure cant be greater than size of the graph");
         }
         this.baseSize = baseSize;
         this.size = size;
@@ -51,11 +51,11 @@ public class KnowledgeRepresentation {
     }
 
     /**
-     * Creates a new KnowledgeRepresentation object basing on an existing HyperGraph.
+     * Creates a new KnowledgeStructure object basing on an existing HyperGraph.
      * 
      * @param graph hypergraph representing knowledge structure
      */
-    public KnowledgeRepresentation(HyperGraph graph) {
+    public KnowledgeStructure(HyperGraph graph) {
         this.graph = graph;
     }
 
@@ -67,13 +67,7 @@ public class KnowledgeRepresentation {
      * @return list of possible resulting elements
      */
     public List<Integer> getResultElements(int e1, int e2) {
-        List<Integer> resultElements = new ArrayList<Integer>();
-        for (int i = 0; i < size; i++) {
-            if (graph.getEdge(e1, e2, i)) {
-                resultElements.add(i);
-            }
-        }
-        return resultElements;
+        return graph.toVertices(e1, e2);
     }
 
     /**

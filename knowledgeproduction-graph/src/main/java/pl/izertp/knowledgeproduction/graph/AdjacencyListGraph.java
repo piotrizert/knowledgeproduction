@@ -19,8 +19,7 @@ public class AdjacencyListGraph implements Graph {
         return vertexNumber;
     }
 
-    @SuppressWarnings("unchecked")
-    // array of lists
+    @SuppressWarnings("unchecked")// array of lists
     public AdjacencyListGraph(int n) {
         vertexNumber = n;
         edges = new List[n];

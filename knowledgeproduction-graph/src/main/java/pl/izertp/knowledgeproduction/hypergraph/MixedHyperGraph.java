@@ -15,13 +15,14 @@ public class MixedHyperGraph implements HyperGraph {
      * Number of graph vertices.
      */
     private int vertexNumber;
-    
+
     /**
      * Creates a new AdjacencyMatrixHyperGraph.
      * 
      * @param n number of vertices
      */
-    @SuppressWarnings("unchecked") //array of lists
+    @SuppressWarnings("unchecked")
+    // array of lists
     public MixedHyperGraph(int n) {
         vertexNumber = n;
         edges = new List[n][n];
@@ -32,41 +33,45 @@ public class MixedHyperGraph implements HyperGraph {
         }
     }
 
+    public int getSize() {
+        return vertexNumber;
+    }
+
     public boolean addEdge(int from1, int from2, int to) {
         checkArgs(from1, from2, to);
-        
-        if(edges[from1][from2].contains(to)){
+        if (edges[from1][from2].contains(to)) {
             return true;
         }
         edges[from1][from2].add(to);
         edges[from2][from1].add(to);
         return false;
     }
-    
+
     public boolean getEdge(int from1, int from2, int to) {
         return edges[from1][from2].contains(to);
     }
 
-    public int getSize() {
-        return vertexNumber;
+    public List<Integer> toVertices(int v1, int v2) {
+        return edges[v1][v2];
     }
-    
+
     private void checkArgs(int from1, int from2, int to) {
-        if(from1 == from2) {
+        if (from1 == from2) {
             throw new IllegalArgumentException("Source vertices have to be different");
         }
-        if( from1 == to || from2 == to) {
+        if (from1 == to || from2 == to) {
             throw new IllegalArgumentException("Source cant be the same as destination");
         }
     }
-    
+
+    // TODO: this is not the optimal implementation, can be done in O(n^2)
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for(int i=0; i<vertexNumber; i++) {
-            for(int j=i+1; j<vertexNumber; j++) {
-                for(int k=0; k<vertexNumber; k++) {
-                    if(getEdge(i, j, k)) {
-                        sb.append(String.format("[{%d} {%d} -> {%d}\n", i,j,k));
+        for (int i = 0; i < vertexNumber; i++) {
+            for (int j = i + 1; j < vertexNumber; j++) {
+                for (int k = 0; k < vertexNumber; k++) {
+                    if (getEdge(i, j, k)) {
+                        sb.append(String.format("[{%d} {%d} -> {%d}\n", i, j, k));
                     }
                 }
             }

@@ -2,15 +2,15 @@ package pl.izertp.knowledgeproduction.core;
 
 public class Simulation implements Runnable {
     
-    private KnowledgeRepresentation knowledgeRepresentation;
+    private KnowledgeStructure knowledgeStructure;
     
     public Simulation() {
-        knowledgeRepresentation = new KnowledgeRepresentation(4, 10, 3);
+        knowledgeStructure = new KnowledgeStructure(4, 10, 3);
     }
     
     public void run() {
-        System.out.println(knowledgeRepresentation);
-        System.out.println(knowledgeRepresentation.getResultElements(2, 3));
+        System.out.println(knowledgeStructure);
+        System.out.println(knowledgeStructure.getResultElements(2, 3));
     }
 
 }

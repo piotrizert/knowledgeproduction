@@ -1,5 +1,7 @@
 package pl.izertp.knowledgeproduction.hypergraph;
 
+import java.util.List;
+
 public interface HyperGraph {
 
     /**
@@ -26,5 +28,14 @@ public interface HyperGraph {
      * @return if the edge is present or not
      */
     public boolean getEdge(int from1, int from2, int to);
+    
+    /**
+     * Returns a list of vertices, to which there is an edge from vertices v1 and v2.
+     * 
+     * @param v1 vertex 1
+     * @param e2 vertex 2
+     * @return list of vertices, to which given pair is connected
+     */
+    public List<Integer> toVertices(int v1, int v2);
 
 }
