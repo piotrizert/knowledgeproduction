@@ -55,7 +55,12 @@ public class KnowledgeStructure {
      * 
      * @param graph hypergraph representing knowledge structure
      */
-    public KnowledgeStructure(HyperGraph graph) {
+    public KnowledgeStructure(HyperGraph graph, int baseSize) {
+        this.size = graph.getSize();
+        if (baseSize > size) {
+            throw new IllegalArgumentException("Size of base in KnowledgeStructure cant be greater than size of the graph");
+        }
+        this.baseSize = baseSize;
         this.graph = graph;
     }
 

@@ -13,6 +13,8 @@ import pl.izertp.knowledgeproduction.hypergraph.MixedHyperGraph;
 public class KnowledgeStructureTest {
 
     private static final int SIZE = 10;
+    
+    private static final int BASESIZE = 5;
 
     private static final int FROM1a = 1;
 
@@ -40,7 +42,7 @@ public class KnowledgeStructureTest {
         graph.addEdge(FROM1a, FROM1b, TO1a);
         graph.addEdge(FROM1a, FROM1b, TO1b);
         graph.addEdge(FROM2a, FROM2b, TO2a);
-        knowledgeStructure = new KnowledgeStructure(graph);
+        knowledgeStructure = new KnowledgeStructure(graph, BASESIZE);
     }
 
     @Test
