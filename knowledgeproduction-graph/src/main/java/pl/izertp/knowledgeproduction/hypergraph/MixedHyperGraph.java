@@ -42,7 +42,7 @@ public class MixedHyperGraph implements HyperGraph {
         edges[from2][from1].add(to);
         return false;
     }
-    //TODO: list contains int/Integer
+    
     public boolean getEdge(int from1, int from2, int to) {
         return edges[from1][from2].contains(to);
     }
@@ -58,6 +58,20 @@ public class MixedHyperGraph implements HyperGraph {
         if( from1 == to || from2 == to) {
             throw new IllegalArgumentException("Source cant be the same as destination");
         }
+    }
+    
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for(int i=0; i<vertexNumber; i++) {
+            for(int j=i; j<vertexNumber; j++) {
+                for(int k=0; k<vertexNumber; k++) {
+                    if(getEdge(i, j, k)) {
+                        sb.append(String.format("[{%d} {%d} -> {%d}\n", i,j,k));
+                    }
+                }
+            }
+        }
+        return sb.toString();
     }
 
 }
