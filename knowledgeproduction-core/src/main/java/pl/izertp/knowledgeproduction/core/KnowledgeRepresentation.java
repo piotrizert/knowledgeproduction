@@ -4,9 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import lombok.Getter;
 import pl.izertp.knowledgeproduction.hypergraph.HyperGraph;
 import pl.izertp.knowledgeproduction.hypergraph.MixedHyperGraph;
-import lombok.Getter;
 
 public class KnowledgeRepresentation {
 
@@ -21,12 +21,12 @@ public class KnowledgeRepresentation {
      */
     @Getter
     private int size;
-    
+
     /**
      * HyperGraph containing knowledge structure.
      */
     private HyperGraph graph;
-    
+
     /**
      * Creates a new KnowledgeRepresentation object with random-generated knowledge HyperGraph.
      * 
@@ -41,15 +41,15 @@ public class KnowledgeRepresentation {
         this.baseSize = baseSize;
         this.size = size;
         this.graph = new MixedHyperGraph(size);
-        
-        for(int i=baseSize; i<size; i++) {
-            for(int j=0; j<connectionNumber; j++) {
+
+        for (int i = baseSize; i < size; i++) {
+            for (int j = 0; j < connectionNumber; j++) {
                 int[] randomPair = getRandomPair(i);
                 graph.addEdge(randomPair[0], randomPair[1], i);
             }
         }
     }
-    
+
     /**
      * Creates a new KnowledgeRepresentation object basing on an existing HyperGraph.
      * 
@@ -58,23 +58,41 @@ public class KnowledgeRepresentation {
     public KnowledgeRepresentation(HyperGraph graph) {
         this.graph = graph;
     }
-    
+
+    /**
+     * Returns a list of knowledge elements, which can be developed from a given pair.
+     * 
+     * @param e1 given element 1
+     * @param e2 given element 2
+     * @return list of possible resulting elements
+     */
+    public List<Integer> getResultElements(int e1, int e2) {
+        List<Integer> resultElements = new ArrayList<Integer>();
+        for (int i = 0; i < size; i++) {
+            if (graph.getEdge(e1, e2, i)) {
+                resultElements.add(i);
+            }
+        }
+        return resultElements;
+    }
+
     /**
      * Returns a pair of random ints from 0 to max-1
+     * 
      * @param max maximum number - 1
      * @return two-element array of random ints
      */
     private int[] getRandomPair(int max) {
         List<Integer> list = new ArrayList<Integer>();
-        for(int i=0; i<max; i++) {
+        for (int i = 0; i < max; i++) {
             list.add(i);
         }
         Collections.shuffle(list);
-        return new int[]{list.get(0), list.get(1)};
+        return new int[] { list.get(0), list.get(1) };
     }
-    
+
     @Override
-    public String toString(){
+    public String toString() {
         return graph.toString();
     }
 

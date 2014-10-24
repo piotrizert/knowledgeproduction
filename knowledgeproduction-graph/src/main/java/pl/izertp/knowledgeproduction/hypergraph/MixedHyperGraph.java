@@ -63,7 +63,7 @@ public class MixedHyperGraph implements HyperGraph {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for(int i=0; i<vertexNumber; i++) {
-            for(int j=i; j<vertexNumber; j++) {
+            for(int j=i+1; j<vertexNumber; j++) {
                 for(int k=0; k<vertexNumber; k++) {
                     if(getEdge(i, j, k)) {
                         sb.append(String.format("[{%d} {%d} -> {%d}\n", i,j,k));
