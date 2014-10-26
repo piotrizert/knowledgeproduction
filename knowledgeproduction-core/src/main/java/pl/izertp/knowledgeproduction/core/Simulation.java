@@ -5,12 +5,12 @@ public class Simulation implements Runnable {
     private KnowledgeStructure knowledgeStructure;
     
     public Simulation() {
-        knowledgeStructure = new KnowledgeStructure(4, 10, 3);
+        knowledgeStructure = new KnowledgeStructure(4, 10, 1);
     }
     
     public void run() {
-        System.out.println(knowledgeStructure);
-        System.out.println(knowledgeStructure.getResultElements(2, 3));
+        Agent agent = new Agent(knowledgeStructure, 0.75);
+        System.out.println(agent);
     }
 
 }
