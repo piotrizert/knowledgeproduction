@@ -37,6 +37,7 @@ public class Agent {
         this.knowledgeSize = knowledgeStructure.getSize();
         knowledgeSet = new boolean[knowledgeSize];
 
+        // set the initial knowledge
         Random random = new Random();
         for (int i = 0; i < knowledgeStructure.getBaseSize(); i++) {
             if (random.nextDouble() < chance) {
@@ -44,6 +45,7 @@ public class Agent {
             }
         }
 
+        // initialise the set of elements possible to develop
         possibleElements = new HashSet<Integer>();
         for (int i = 0; i < knowledgeSize; i++) {
             if (!knowledgeSet[i])
@@ -80,12 +82,14 @@ public class Agent {
      * Single step of knowledge development - adds a randomly chosen piece of knowledge
      * possible to develop basing on current state of knowledge.
      */
-    public void propagateKnowledge() {
+    public boolean produceKnowledge() {
         Integer element = getRandomSetElement(possibleElements);
         if (element != null) {
             this.addKnowledgeElement(element);
             possibleElements.remove(element);
+            return true;
         }
+        return false;
     }
 
     /**

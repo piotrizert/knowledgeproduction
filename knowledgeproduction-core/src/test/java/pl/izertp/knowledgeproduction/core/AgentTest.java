@@ -65,11 +65,11 @@ public class AgentTest {
     @Test
     public void testPropagateKnowledge() {
         assertEquals(BASESIZE, agent.getHaveKnowledge().size());
-        agent.propagateKnowledge();
+        agent.produceKnowledge();
         assertEquals(BASESIZE + 1, agent.getHaveKnowledge().size());
-        agent.propagateKnowledge();
+        agent.produceKnowledge();
         assertEquals(BASESIZE + 2, agent.getHaveKnowledge().size());
-        agent.propagateKnowledge();
+        agent.produceKnowledge();
         assertEquals(BASESIZE + 2, agent.getHaveKnowledge().size()); // size of knowledge should stop growing now, because agent can develop only 2 elements
     }
 
