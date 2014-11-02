@@ -15,7 +15,7 @@ public class AdjacencyListGraph implements Graph {
      */
     private List<Integer>[] edges;
 
-    // array of lists
+    // array of lists warning - type match
     @SuppressWarnings("unchecked")
     public AdjacencyListGraph(int n) {
         vertexNumber = n;
