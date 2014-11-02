@@ -52,7 +52,7 @@ public class AgentTest {
         graph.addEdge(FROM1a, FROM1b, TO1a);
         graph.addEdge(FROM1a, FROM1b, TO1b);
         knowledgeStructure = new KnowledgeStructure(graph, BASESIZE);
-        agent = new Agent(knowledgeStructure, 1); // note, that now agent has all the base knowledge elements [0, BASESIZE-1]
+        agent = new Agent(knowledgeStructure, 1, 1); // note, that now agent has all the base knowledge elements [0, BASESIZE-1]
     }
 
     @Test

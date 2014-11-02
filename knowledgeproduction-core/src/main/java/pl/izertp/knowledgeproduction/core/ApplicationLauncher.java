@@ -3,7 +3,7 @@ package pl.izertp.knowledgeproduction.core;
 public class ApplicationLauncher {
 
     public static void main(String[] args) {
-        new Simulation().run();
+        new Simulation(15).run();
     }
 
 }

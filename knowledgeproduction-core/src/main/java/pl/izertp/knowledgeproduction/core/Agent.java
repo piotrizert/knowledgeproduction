@@ -6,11 +6,16 @@ import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
+import lombok.Getter;
+
 public class Agent {
 
     private int knowledgeSize;
 
     private KnowledgeStructure knowledgeStructure;
+    
+    @Getter
+    private double productionChance;
 
     /**
      * Represents current state of agent's knowledge.
@@ -30,17 +35,18 @@ public class Agent {
      * a parameter.
      * 
      * @param knowledgeStructure structure of knowledge
-     * @param chance chance at which base elements will be selected (must be [0,1])
+     * @param baseElementChance chance at which base elements will be selected (must be [0,1])
      */
-    public Agent(KnowledgeStructure knowledgeStructure, double chance) {
+    public Agent(KnowledgeStructure knowledgeStructure, double baseElementChance, double productionChance) {
         this.knowledgeStructure = knowledgeStructure;
         this.knowledgeSize = knowledgeStructure.getSize();
+        this.productionChance = productionChance;
         knowledgeSet = new boolean[knowledgeSize];
 
         // set the initial knowledge
         Random random = new Random();
         for (int i = 0; i < knowledgeStructure.getBaseSize(); i++) {
-            if (random.nextDouble() < chance) {
+            if (random.nextDouble() < baseElementChance) {
                 knowledgeSet[i] = true;
             }
         }
@@ -81,6 +87,8 @@ public class Agent {
     /**
      * Single step of knowledge development - adds a randomly chosen piece of knowledge
      * possible to develop basing on current state of knowledge.
+     * 
+     * @return true, if an element was produced
      */
     public boolean produceKnowledge() {
         Integer element = getRandomSetElement(possibleElements);
