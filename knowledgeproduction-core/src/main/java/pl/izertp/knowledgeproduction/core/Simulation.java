@@ -35,9 +35,12 @@ public class Simulation implements Runnable {
         agentStructure = new AgentStructure(agents);
     }
 
+    /**
+     * Runnable interface method - runs the simulation.
+     */
     public void run() {
         System.out.println(agents[0].toString());
-        for(int i=0; i<10; i++){
+        for (int i = 0; i < 10; i++) {
             agentStructure.makeStep(0);
         }
     }

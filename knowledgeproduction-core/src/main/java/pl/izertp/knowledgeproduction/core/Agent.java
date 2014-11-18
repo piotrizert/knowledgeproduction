@@ -10,10 +10,19 @@ import lombok.Getter;
 
 public class Agent {
 
+    /**
+     * Size of the knowledge set.
+     */
     private int knowledgeSize;
 
+    /**
+     * Structure of the knowledge (with the hypergraph).
+     */
     private KnowledgeStructure knowledgeStructure;
-    
+
+    /**
+     * Chance of producing knowledge == (1 - propagationChance).
+     */
     @Getter
     private double productionChance;
 
@@ -35,9 +44,11 @@ public class Agent {
      * a parameter.
      * 
      * @param knowledgeStructure structure of knowledge
-     * @param baseElementChance chance at which base elements will be selected (must be [0,1])
+     * @param baseElementChance chance at which base elements will be selected ,must be [0,1]
+     * @param productionChance chance of producing knowledge == (1 - propagationChance), must be [0,1]
      */
     public Agent(KnowledgeStructure knowledgeStructure, double baseElementChance, double productionChance) {
+        // TODO: check args 0-1
         this.knowledgeStructure = knowledgeStructure;
         this.knowledgeSize = knowledgeStructure.getSize();
         this.productionChance = productionChance;
@@ -51,7 +62,7 @@ public class Agent {
             }
         }
 
-        // initialise the set of elements possible to develop
+        // initialize the set of elements possible to develop
         possibleElements = new HashSet<Integer>();
         for (int i = 0; i < knowledgeSize; i++) {
             if (!knowledgeSet[i])

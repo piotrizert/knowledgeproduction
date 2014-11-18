@@ -10,14 +10,33 @@ import pl.izertp.knowledgeproduction.graph.Graph;
 
 public class AgentStructure {
 
+    /**
+     * Graph of agents' connections.
+     */
     private Graph agentsGraph;
 
+    /**
+     * Array of agents.
+     */
     private Agent[] agents;
 
+    /**
+     * Array of lists of agents' neighbors.
+     */
     private List<Agent>[] neighborList;
 
+    /**
+     * Number of agents.
+     */
     private int size;
 
+    /**
+     * Initializes the object with given array of agents.
+     * Agents' connection graph is initialized as Erdos-Renyi graph by helper class.
+     * neighborList is initialized.
+     * 
+     * @param agents array of agents
+     */
     // array of lists warning - type check
     @SuppressWarnings("unchecked")
     public AgentStructure(Agent[] agents) {
@@ -31,6 +50,13 @@ public class AgentStructure {
         }
     }
 
+    /**
+     * A single action of the agent - produces or propagates knowledge accordingly to agent's
+     * production chance.
+     * 
+     * @param agentIndex index of the agent, which will perform action
+     * @return true, if action returned an effect (knowledge was actually propagated or produced)
+     */
     public boolean makeStep(int agentIndex) {
         double random = new Random().nextDouble();
         double productionChance = agents[agentIndex].getProductionChance();
@@ -41,6 +67,12 @@ public class AgentStructure {
         }
     }
 
+    /**
+     * Simulates agent's knowledge production (uses Agent internal method).
+     * 
+     * @param agentIndex index of the agent which will produce knowledge
+     * @return true, if the agent produced some knowledge
+     */
     private boolean produceKnowledge(int agentIndex) {
         boolean effect = agents[agentIndex].produceKnowledge();
         if (effect) {
@@ -51,6 +83,14 @@ public class AgentStructure {
         return effect;
     }
 
+    /**
+     * Propagates the knowledge of selected agent to his randomly selected neighbor.
+     * Knowledge element to share is selected randomly.
+     * If the naighbor already has this element, nothing happens.
+     * 
+     * @param agentIndex index of agent, which will try to share his knowledge with a random neighbor
+     * @return true, if the knowledge was passed
+     */
     private boolean propagateKnowledge(int agentIndex) {
         Random random = new Random();
         int neighborCount = neighborList[agentIndex].size();
@@ -72,6 +112,12 @@ public class AgentStructure {
         return effect;
     }
 
+    /**
+     * Helper method used to initialize neighborList.
+     * 
+     * @param index index of the agent
+     * @return list of its neighbors
+     */
     private List<Agent> getNeighbours(int index) {
         List<Agent> agentList = new ArrayList<Agent>();
         List<Integer> indexList = agentsGraph.getNeighbors(index);

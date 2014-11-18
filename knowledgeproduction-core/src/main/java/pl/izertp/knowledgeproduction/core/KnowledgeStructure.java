@@ -29,6 +29,14 @@ public class KnowledgeStructure {
 
     /**
      * Creates a new KnowledgeStructure object with random-generated knowledge HyperGraph.
+     * Generation algorithm:
+     * 
+     * <pre>
+     * 1.   The base vertices of the graph are not connected.
+     * 2.   A non-base vertex is added and connected to 'connectionNumber' randomly selected
+     *      pairs of already existing (base and non-base) vertices. If a pair is selected 
+     *      multiple times, the edge is added only once.
+     * </pre>
      * 
      * @param baseSize number of basic knowledge elements, from which all other elements can be developed
      * @param size size of the whole knowledge graph
