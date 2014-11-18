@@ -11,17 +11,23 @@ public class AdjacencyListGraph implements Graph {
     private int vertexNumber;
 
     /**
-     * Array of lists of edges. Should be kept symetric (graph is undirected).
+     * Array of lists of vertex neighbors (adjacency lists). Should be kept symmetric
+     * (graph is undirected).
      */
-    private List<Integer>[] edges;
+    private List<Integer>[] neighbors;
 
+    /**
+     * Initializes the graph by initialization of adjacency lists array.
+     * 
+     * @param n number of vertices
+     */
     // array of lists warning - type match
     @SuppressWarnings("unchecked")
     public AdjacencyListGraph(int n) {
         vertexNumber = n;
-        edges = new List[n];
+        neighbors = new List[n];
         for (int i = 0; i < n; i++) {
-            edges[i] = new ArrayList<Integer>();
+            neighbors[i] = new ArrayList<Integer>();
         }
     }
 
@@ -31,20 +37,20 @@ public class AdjacencyListGraph implements Graph {
 
     public boolean addEdge(int from, int to) {
         checkArgs(from, to);
-        if (edges[from].contains(to)) {
+        if (neighbors[from].contains(to)) {
             return true;
         }
-        edges[from].add(to);
-        edges[to].add(from);
+        neighbors[from].add(to);
+        neighbors[to].add(from);
         return false;
     }
 
     public boolean getEdge(int from, int to) {
-        return edges[from].contains(to);
+        return neighbors[from].contains(to);
     }
 
     public List<Integer> getNeighbors(int v) {
-        return edges[v];
+        return neighbors[v];
     }
 
     private void checkArgs(int from, int to) {

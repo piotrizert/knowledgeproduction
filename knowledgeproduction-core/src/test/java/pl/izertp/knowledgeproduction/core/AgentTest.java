@@ -63,7 +63,7 @@ public class AgentTest {
     }
 
     @Test
-    public void testPropagateKnowledge() {
+    public void testProduceKnowledge() {
         assertEquals(BASESIZE, agent.getHaveKnowledge().size());
         agent.produceKnowledge();
         assertEquals(BASESIZE + 1, agent.getHaveKnowledge().size());

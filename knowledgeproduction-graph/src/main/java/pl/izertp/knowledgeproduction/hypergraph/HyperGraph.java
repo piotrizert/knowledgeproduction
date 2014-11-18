@@ -2,6 +2,14 @@ package pl.izertp.knowledgeproduction.hypergraph;
 
 import java.util.List;
 
+/**
+ * Interface for a hypergraph. Contains basic methods:
+ * - adding and removing edges
+ * - getter of the graph's size
+ * - getter of vertices, to which there is an edge from a given pair
+ * 
+ * @author Piotr Izert
+ */
 public interface HyperGraph {
 
     /**
@@ -18,7 +26,7 @@ public interface HyperGraph {
      * @return if the edge was already present or not
      */
     public boolean addEdge(int from1, int from2, int to);
-    
+
     /**
      * Checks if the edge is present.
      * 
@@ -28,12 +36,12 @@ public interface HyperGraph {
      * @return if the edge is present or not
      */
     public boolean getEdge(int from1, int from2, int to);
-    
+
     /**
      * Returns a list of vertices, to which there is an edge from vertices v1 and v2.
      * 
      * @param v1 vertex 1
-     * @param e2 vertex 2
+     * @param v2 vertex 2
      * @return list of vertices, to which given pair is connected
      */
     public List<Integer> toVertices(int v1, int v2);

@@ -2,6 +2,13 @@ package pl.izertp.knowledgeproduction.graph;
 
 import java.util.List;
 
+/**
+ * Interface of a graph. Contains basic graph operations:
+ * - adding and removing edges
+ * - getters for graph size and neighbors of given vertex.
+ * 
+ * @author Piotr Izert
+ */
 public interface Graph {
 
     /**
@@ -26,9 +33,9 @@ public interface Graph {
      * @return if the edge is present or not
      */
     public boolean getEdge(int from, int to);
-    
+
     /**
-     * Returns a list of all neighbors of the vertex. 
+     * Returns a list of all neighbors of the vertex.
      * 
      * @param v vertex
      * @return list of neighbors
