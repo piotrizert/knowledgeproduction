@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import lombok.Setter;
 import pl.izertp.knowledgeproduction.graph.AdjacencyListGraph;
 import pl.izertp.knowledgeproduction.graph.ErdosRenyiCreator;
 import pl.izertp.knowledgeproduction.graph.Graph;
@@ -13,11 +14,13 @@ public class AgentStructure {
     /**
      * Graph of agents' connections.
      */
+    @Setter
     private Graph agentsGraph;
 
     /**
      * Array of agents.
      */
+    @Setter
     private Agent[] agents;
 
     /**
@@ -33,20 +36,35 @@ public class AgentStructure {
     /**
      * Initializes the object with given array of agents.
      * Agents' connection graph is initialized as Erdos-Renyi graph by helper class.
-     * neighborList is initialized.
+     * neighborList is also initialized.
      * 
      * @param agents array of agents
      */
-    // array of lists warning - type check
-    @SuppressWarnings("unchecked")
     public AgentStructure(Agent[] agents) {
         this.agents = agents;
         size = agents.length;
         agentsGraph = new AdjacencyListGraph(size);
         ErdosRenyiCreator.InitErdosRenyiGraph(agentsGraph);
+        initNeighborList();
+    }
+
+    /**
+     * Empty constructor. Note, that after setting all the fields, initNeighborList must be called.
+     */
+    public AgentStructure() {
+
+    }
+
+    /**
+     * Initializes the neighborList array - must be called after setting agents and agentsGraph.
+     */
+    // array of lists warning - type check
+    @SuppressWarnings("unchecked")
+    public void initNeighborList() {
+        size = agents.length;
         neighborList = new List[size];
         for (int i = 0; i < size; i++) {
-            neighborList[i] = getNeighbours(i);
+            neighborList[i] = getNeighbors(i);
         }
     }
 
@@ -92,6 +110,7 @@ public class AgentStructure {
      * @return true, if the knowledge was passed
      */
     private boolean propagateKnowledge(int agentIndex) {
+        Agent propagatingAgent = agents[agentIndex];
         Random random = new Random();
         int neighborCount = neighborList[agentIndex].size();
         if (neighborCount == 0) {
@@ -100,7 +119,7 @@ public class AgentStructure {
         }
         int randomAgentIndex = random.nextInt(neighborCount);
         Agent randomAgent = neighborList[agentIndex].get(randomAgentIndex);
-        List<Integer> knowledgeToPropagate = randomAgent.getHaveKnowledge();
+        List<Integer> knowledgeToPropagate = propagatingAgent.getHaveKnowledge();
         int randomIndex = random.nextInt(knowledgeToPropagate.size());
         int randomKnowledgeElement = knowledgeToPropagate.get(randomIndex);
         boolean effect = !(randomAgent.addKnowledgeElement(randomKnowledgeElement));
@@ -118,7 +137,7 @@ public class AgentStructure {
      * @param index index of the agent
      * @return list of its neighbors
      */
-    private List<Agent> getNeighbours(int index) {
+    private List<Agent> getNeighbors(int index) {
         List<Agent> agentList = new ArrayList<Agent>();
         List<Integer> indexList = agentsGraph.getNeighbors(index);
         for (Integer i : indexList) {

@@ -7,6 +7,7 @@ import java.util.Random;
 import java.util.Set;
 
 import lombok.Getter;
+import lombok.Setter;
 
 public class Agent {
 
@@ -21,14 +22,27 @@ public class Agent {
     private KnowledgeStructure knowledgeStructure;
 
     /**
+     * KnowledgeStructure setter. It also sets knowledgeSize.
+     * 
+     * @param knowledgeStructure
+     */
+    public void setKnowledgeStructure(KnowledgeStructure knowledgeStructure) {
+        this.knowledgeStructure = knowledgeStructure;
+        this.knowledgeSize = knowledgeStructure.getSize();
+    }
+
+    /**
      * Chance of producing knowledge == (1 - propagationChance).
      */
     @Getter
+    @Setter
     private double productionChance;
 
     /**
      * Represents current state of agent's knowledge.
      */
+    @Getter
+    @Setter
     private boolean[] knowledgeSet;
 
     /**
@@ -63,6 +77,22 @@ public class Agent {
         }
 
         // initialize the set of elements possible to develop
+        initAgent();
+    }
+
+    /**
+     * Empty constructor. Note, that knowledgeStructure, knowledgeSet and
+     * productionChance must be set manually.
+     * After setting initial knowledge set and graph, initAgent method must be called.
+     */
+    public Agent() {
+
+    }
+
+    /**
+     * Method, which initializes agent's possibleElements set.
+     */
+    public void initAgent() {
         possibleElements = new HashSet<Integer>();
         for (int i = 0; i < knowledgeSize; i++) {
             if (!knowledgeSet[i])
