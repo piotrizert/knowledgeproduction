@@ -14,6 +14,7 @@ public class Agent {
     /**
      * Size of the knowledge set.
      */
+    @Getter
     private int knowledgeSize;
 
     /**
@@ -41,8 +42,12 @@ public class Agent {
     /**
      * Represents current state of agent's knowledge.
      */
-    @Setter
     private boolean[] knowledgeSet;
+    
+    public void setKnowledgeSet(boolean[] knowledgeSet) {
+        this.knowledgeSet = knowledgeSet;
+        this.knowledgeSize = knowledgeSet.length;
+    }
 
     /**
      * Elements of knowledge possible to develop with the present state of knowledge,
@@ -183,14 +188,8 @@ public class Agent {
      * 
      * @return total number of knowledge elements
      */
-    public int getKnowledgeCount() {
-        int counter = 0;
-        for(int i=0; i<knowledgeSize; i++) {
-            if(knowledgeSet[i]) {
-                counter++;
-            }
-        }
-        return counter;
+    public int getKnowledgeTotalCount() {
+        return getHaveKnowledge().size();
     }
 
     @Override
