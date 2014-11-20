@@ -55,7 +55,7 @@ public class AdjacencyListGraph implements Graph {
 
     private void checkArgs(int from, int to) {
         if (from == to) {
-            throw new IllegalArgumentException("Edge cant start and end in the same vertex");
+            throw new IllegalArgumentException("Loops are not allowed");
         }
     }
 

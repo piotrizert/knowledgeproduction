@@ -41,7 +41,6 @@ public class Agent {
     /**
      * Represents current state of agent's knowledge.
      */
-    @Getter
     @Setter
     private boolean[] knowledgeSet;
 
@@ -129,16 +128,16 @@ public class Agent {
      * Single step of knowledge development - adds a randomly chosen piece of knowledge
      * possible to develop basing on current state of knowledge.
      * 
-     * @return true, if an element was produced
+     * @return index of produced element, -1, if nothing was produced
      */
-    public boolean produceKnowledge() {
+    public int produceKnowledge() {
         Integer element = getRandomSetElement(possibleElements);
         if (element != null) {
             this.addKnowledgeElement(element);
             possibleElements.remove(element);
-            return true;
+            return element;
         }
-        return false;
+        return -1;
     }
 
     /**
@@ -167,6 +166,31 @@ public class Agent {
                 doesntHaveKnowledge.add(i);
         }
         return doesntHaveKnowledge;
+    }
+
+    /**
+     * Checks, if this agent has knowledge element given as parameter.
+     * 
+     * @param i index of the element
+     * @return true, if the agent has this element, false otherwise
+     */
+    public boolean hasKnowledgeElement(int i) {
+        return knowledgeSet[i];
+    }
+    
+    /**
+     * Returns total number of agent's knowledge elements.
+     * 
+     * @return total number of knowledge elements
+     */
+    public int getKnowledgeCount() {
+        int counter = 0;
+        for(int i=0; i<knowledgeSize; i++) {
+            if(knowledgeSet[i]) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     @Override
@@ -205,6 +229,6 @@ public class Agent {
                 return obj;
             i = i + 1;
         }
-        return null; // never reached
+        throw new IllegalStateException("This piece of code should never be reached");
     }
 }

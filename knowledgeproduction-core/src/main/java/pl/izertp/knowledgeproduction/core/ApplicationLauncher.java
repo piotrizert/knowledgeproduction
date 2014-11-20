@@ -6,7 +6,7 @@ public class ApplicationLauncher {
      * Main method of the application. Starts the simulation with given parameters.
      */
     public static void main(String[] args) {
-        new Simulation(15).run();
+        new Simulation().run();
     }
 
 }

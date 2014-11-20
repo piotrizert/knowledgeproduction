@@ -1,6 +1,7 @@
 package pl.izertp.knowledgeproduction.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
@@ -40,11 +41,11 @@ public class AgentStructure {
      * 
      * @param agents array of agents
      */
-    public AgentStructure(Agent[] agents) {
+    public AgentStructure(Agent[] agents, int connectionNumber) {
         this.agents = agents;
         size = agents.length;
         agentsGraph = new AdjacencyListGraph(size);
-        ErdosRenyiCreator.InitErdosRenyiGraph(agentsGraph);
+        ErdosRenyiCreator.InitErdosRenyiGraph(agentsGraph, connectionNumber);
         initNeighborList();
     }
 
@@ -89,16 +90,17 @@ public class AgentStructure {
      * Simulates agent's knowledge production (uses Agent internal method).
      * 
      * @param agentIndex index of the agent which will produce knowledge
-     * @return true, if the agent produced some knowledge
+     * @return true, if some knowledge was produced, false otherwise
      */
     private boolean produceKnowledge(int agentIndex) {
-        boolean effect = agents[agentIndex].produceKnowledge();
-        if (effect) {
-            System.out.println(String.format("Agent %d produced some knowledge", agentIndex));
-        } else {
+        int producedKnowledge = agents[agentIndex].produceKnowledge();
+        if (producedKnowledge < 0) {
             System.out.println(String.format("Agent %d didn't produce knowledge", agentIndex));
+            return false;
+        } else {
+            System.out.println(String.format("Agent %d produced knowledge element %d", agentIndex, producedKnowledge));
+            return true;
         }
-        return effect;
     }
 
     /**
@@ -110,23 +112,29 @@ public class AgentStructure {
      * @return true, if the knowledge was passed
      */
     private boolean propagateKnowledge(int agentIndex) {
-        Agent propagatingAgent = agents[agentIndex];
         Random random = new Random();
+
+        Agent propagatingAgent = agents[agentIndex];
         int neighborCount = neighborList[agentIndex].size();
         if (neighborCount == 0) {
             System.out.println(String.format("Agent %d doesn't have any neighbors, so he doesn't propagate knowledge", agentIndex));
             return false;
         }
-        int randomAgentIndex = random.nextInt(neighborCount);
-        Agent randomAgent = neighborList[agentIndex].get(randomAgentIndex);
+
+        int randomNeighborIndex = random.nextInt(neighborCount);
+        Agent randomNeighbor = neighborList[agentIndex].get(randomNeighborIndex);
         List<Integer> knowledgeToPropagate = propagatingAgent.getHaveKnowledge();
-        int randomIndex = random.nextInt(knowledgeToPropagate.size());
-        int randomKnowledgeElement = knowledgeToPropagate.get(randomIndex);
-        boolean effect = !(randomAgent.addKnowledgeElement(randomKnowledgeElement));
+        if(knowledgeToPropagate.size() == 0) {
+            System.out.println(String.format("Agent %d doesn't have any knowledge", agentIndex));
+            return false;
+        }
+        int randomKnowledgeElementIndex = random.nextInt(knowledgeToPropagate.size());
+        int randomKnowledgeElement = knowledgeToPropagate.get(randomKnowledgeElementIndex);
+        boolean effect = !(randomNeighbor.addKnowledgeElement(randomKnowledgeElement));
         if (effect) {
-            System.out.println(String.format("Agent %d passed some knowledge to agent %d", agentIndex, randomAgentIndex));
+            System.out.println(String.format("Agent %d passed some knowledge to agent %d", agentIndex, Arrays.asList(agents).indexOf(randomNeighbor)));
         } else {
-            System.out.println(String.format("Agent %d didn't pass any knowledge to agent %d", agentIndex, randomAgentIndex));
+            System.out.println(String.format("Agent %d didn't pass any knowledge to agent %d", agentIndex, Arrays.asList(agents).indexOf(randomNeighbor)));
         }
         return effect;
     }
