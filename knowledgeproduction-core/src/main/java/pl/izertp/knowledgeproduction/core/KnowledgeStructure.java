@@ -8,6 +8,12 @@ import lombok.Getter;
 import pl.izertp.knowledgeproduction.hypergraph.HyperGraph;
 import pl.izertp.knowledgeproduction.hypergraph.MixedHyperGraph;
 
+/**
+ * Holds the structuro of knowledge - knowledge hypergraph, base knowledge set,
+ * method, which creates a random knowledge graph.
+ * 
+ * @author Piotr Izert
+ */
 public class KnowledgeStructure {
 
     /**

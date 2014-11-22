@@ -10,6 +10,12 @@ import pl.izertp.knowledgeproduction.graph.AdjacencyListGraph;
 import pl.izertp.knowledgeproduction.graph.ErdosRenyiCreator;
 import pl.izertp.knowledgeproduction.graph.Graph;
 
+/**
+ * Structure of agents. Holds the connections between agents,
+ * contains implementation of knowledge propagation and a single step of simulation.
+ * 
+ * @author Piotr Izert
+ */
 public class AgentStructure {
 
     /**

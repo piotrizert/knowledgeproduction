@@ -3,6 +3,11 @@ package pl.izertp.knowledgeproduction.graph;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implementation of the Graph using vertex adjacency lists.
+ * 
+ * @author Piotr Izert
+ */
 public class AdjacencyListGraph implements Graph {
 
     /**

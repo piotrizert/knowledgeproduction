@@ -9,6 +9,12 @@ import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * A class of a single agent - an unit which can develop knowledge and propagate knowledge
+ * to other agents. 
+ * 
+ * @author Piotr Izert
+ */
 public class Agent {
 
     /**

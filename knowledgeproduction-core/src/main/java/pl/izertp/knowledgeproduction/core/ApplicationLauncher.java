@@ -1,5 +1,10 @@
 package pl.izertp.knowledgeproduction.core;
 
+/**
+ * A class with main() method, starts the simulation.
+ * 
+ * @author Piotr Izert
+ */
 public class ApplicationLauncher {
 
     /**

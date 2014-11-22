@@ -2,6 +2,11 @@ package pl.izertp.knowledgeproduction.core;
 
 import java.util.Random;
 
+/**
+ * Implements runnable method, which does the simulation.
+ * 
+ * @author Piotr Izert
+ */
 public class Simulation implements Runnable {
 
     private static final int KNOWLEDGE_SIZE = 10;

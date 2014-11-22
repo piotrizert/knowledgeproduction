@@ -3,6 +3,15 @@ package pl.izertp.knowledgeproduction.hypergraph;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Implemetation of HyperGraph based partially on vertex matrix and partially on adjacency lists.
+ * All the pairs of vertices are kept in a two-dimenstional array. Each element of the array
+ * contains a list of vertices, to which there is an edge from the given pair of vertices.
+ * Provides fast - O(1) - access to the "child" element list needed in knowledge production
+ * algorithm (method toVertices).
+ * 
+ * @author Piotr Izert
+ */
 public class MixedHyperGraph implements HyperGraph {
 
     /**
@@ -17,7 +26,7 @@ public class MixedHyperGraph implements HyperGraph {
     private int vertexNumber;
 
     /**
-     * Creates a new AdjacencyMatrixHyperGraph.
+     * Creates a new, empty MixedHyperGraph.
      * 
      * @param n number of vertices
      */
@@ -52,7 +61,6 @@ public class MixedHyperGraph implements HyperGraph {
     }
 
     public List<Integer> toVertices(int v1, int v2) {
-        // TODO: check args
         return edges[v1][v2];
     }
 
@@ -65,7 +73,7 @@ public class MixedHyperGraph implements HyperGraph {
         }
     }
 
-    // TODO: this is not the optimal implementation, can be done in O(n^2)
+    // TODO: this is not the optimal implementation, can be done in O(n^2) for sparse graphs
     public String toString() {
         StringBuilder sb = new StringBuilder();
         for (int i = 0; i < vertexNumber; i++) {
