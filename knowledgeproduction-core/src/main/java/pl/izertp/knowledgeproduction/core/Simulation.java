@@ -1,5 +1,6 @@
 package pl.izertp.knowledgeproduction.core;
 
+import java.io.IOException;
 import java.util.Random;
 
 /**
@@ -9,7 +10,7 @@ import java.util.Random;
  */
 public class Simulation implements Runnable {
 
-    private static final int KNOWLEDGE_SIZE = 10;
+    private static final int KNOWLEDGE_SIZE = 30;
 
     private static final int KNOWLEDGE_BASE_SIZE = 4;
 
@@ -23,7 +24,7 @@ public class Simulation implements Runnable {
 
     private static final double PRODUCTION_PROBABILITY = 0.5;
 
-    private static final int NUMBER_OF_ITERATIONS = 10;
+    private static final int NUMBER_OF_ITERATIONS = 100;
 
     /**
      * Structure of the knowledge for all the agents.
@@ -45,12 +46,12 @@ public class Simulation implements Runnable {
      */
     public Simulation() {
         knowledgeStructure = new KnowledgeStructure(KNOWLEDGE_BASE_SIZE, KNOWLEDGE_SIZE, KNOWLEDGE_CONNECTIONS);
-        
+
         // knowledge draw is repeated, if there is a base element which is not obtained by any agent
         while (agents == null || SimulationStatistics.numberOfElements(agents) < KNOWLEDGE_BASE_SIZE) {
             if (agents != null)
                 System.out.println("Re-drawing knowledge elements");
-            
+
             agents = new Agent[NUMBER_OF_AGENTS];
             for (int i = 0; i < NUMBER_OF_AGENTS; i++) {
                 agents[i] = new Agent(knowledgeStructure, KNOWLEDGE_ELEMENT_PROBABILITY, PRODUCTION_PROBABILITY);
@@ -63,6 +64,13 @@ public class Simulation implements Runnable {
      * Runnable interface method - runs the simulation.
      */
     public void run() {
+        try {
+            SimulationStatistics.openFiles();
+        } catch (IOException e) {
+            System.out.println("Problem with opening output files, terminating application");
+            return;
+        }
+
         System.out.println("Example agent generated:");
         System.out.println(agents[0].toString());
         writeStatistics();
@@ -72,6 +80,9 @@ public class Simulation implements Runnable {
             }
             writeStatistics();
         }
+
+        SimulationStatistics.closeFiles();
+
     }
 
     private int randomAgentIndex() {
@@ -79,9 +90,9 @@ public class Simulation implements Runnable {
     }
 
     private void writeStatistics() {
-        int totalKnowledge = SimulationStatistics.sumOfElements(agents);
-        int numberOfDifferentKnowledge = SimulationStatistics.numberOfElements(agents);
-        int[] knowledgeDistribution = SimulationStatistics.elementDistribution(agents);
+        int totalKnowledge = SimulationStatistics.writeSumOfElements(agents);
+        int numberOfDifferentKnowledge = SimulationStatistics.writeNumberOfElements(agents);
+        int[] knowledgeDistribution = SimulationStatistics.writeElementDistribution(agents);
 
         StringBuilder sb = new StringBuilder();
         sb.append("\nSTATISTICS:\n");

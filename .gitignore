@@ -6,3 +6,4 @@ bin/
 *.log
 nbactions.xml
 *~
+output/
