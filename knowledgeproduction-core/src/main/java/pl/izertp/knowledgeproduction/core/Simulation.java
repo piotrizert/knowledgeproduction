@@ -76,12 +76,12 @@ public class Simulation implements Runnable {
 
         System.out.println("Example agent generated:");
         System.out.println(agents[0].toString());
-        writeStatistics();
+        writeStatistics(true);
         for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
             for (int j = 0; j < agents.length; j++) {
                 agentStructure.makeStep(randomAgentIndex());
             }
-            writeStatistics();
+            writeStatistics(false);
         }
 
         SimulationStatistics.closeFiles();
@@ -92,23 +92,37 @@ public class Simulation implements Runnable {
         return new Random().nextInt(agents.length);
     }
 
-    private void writeStatistics() {
+    private void writeStatistics(boolean stdout) {
         int totalKnowledge = SimulationStatistics.writeSumOfElements(agents);
         int numberOfDifferentKnowledge = SimulationStatistics.writeNumberOfElements(agents);
+        int[] distribution = SimulationStatistics.writeDistributionOfKnowledgeCount(agents);
         int[] knowledgeSums = SimulationStatistics.writeSumOfEachElement(agents);
 
-        StringBuilder sb = new StringBuilder();
-        sb.append("\nSTATISTICS:\n");
-        sb.append(String.format("Total number of knowledge elements: %d\n", totalKnowledge));
-        sb.append(String.format("Number of different knowledge elements: %d\n", numberOfDifferentKnowledge));
-        sb.append("Knowledge sums: \n");
-        for (int i = 0; i < knowledgeSums.length; i++) {
-            sb.append(String.format("%d\t", i));
+        if (stdout) {
+            StringBuilder sb = new StringBuilder();
+            sb.append("\nSTATISTICS:\n");
+            sb.append(String.format("Total number of knowledge elements: %d\n", totalKnowledge));
+            sb.append(String.format("Number of different knowledge elements: %d\n", numberOfDifferentKnowledge));
+            sb.append("Distribution: \n");
+            for (int i = 0; i < distribution.length; i++) {
+                sb.append(String.format("%d\t", i));
+            }
+            sb.append("\n");
+            for (int i = 0; i < distribution.length; i++) {
+                sb.append(String.format("%d\t", distribution[i]));
+            }
+            sb.append("\n");
+            
+            sb.append("Knowledge sums: \n");
+            for (int i = 0; i < knowledgeSums.length; i++) {
+                sb.append(String.format("%d\t", i));
+            }
+            sb.append("\n");
+            for (int i = 0; i < knowledgeSums.length; i++) {
+                sb.append(String.format("%d\t", knowledgeSums[i]));
+            }
+            sb.append("\n");
+            System.out.println(sb.toString());
         }
-        sb.append("\n");
-        for (int i = 0; i < knowledgeSums.length; i++) {
-            sb.append(String.format("%d\t", knowledgeSums[i]));
-        }
-        System.out.println(sb.toString());
     }
 }

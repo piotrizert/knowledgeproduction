@@ -18,6 +18,8 @@ public class SimulationStatistics {
 
     private static final String NUMBER_OF_ELEMENTS_FILENAME = "numberofelements.txt";
 
+    private static final String DISTRIBUTION_FILENAME = "distribution.txt";
+
     private static final String SUMS_OF_EACH_ELEMENT_FILENAME = "sumsofeachelement.txt";
 
     private static final String OUTPUT_DIRECTORY = "output";
@@ -25,6 +27,8 @@ public class SimulationStatistics {
     private static BufferedWriter sumAllWriter;
 
     private static BufferedWriter numberWriter;
+
+    private static BufferedWriter distributionWriter;
 
     private static BufferedWriter sumEachWriter;
 
@@ -93,18 +97,52 @@ public class SimulationStatistics {
     }
 
     /**
+     * Returns the distribution of knowledge total count of all the agents.
+     * Can be interpreted as a histogram of total elements count.
+     * 
+     * @param agents array of agents
+     * @return array of counts of the knowledge sum
+     */
+    public static int[] distributionOfKnowledgeCount(Agent[] agents) {
+        int maxSize = knowledgeMaxSize(agents);
+        int[] distribution = new int[maxSize+1];
+        for (Agent a : agents) {
+            distribution[a.getKnowledgeTotalCount()]++;
+        }
+        return distribution;
+    }
+
+    /**
+     * Writes the distribution of knowledge total count of all the agents.
+     * 
+     * @param agents array of agents
+     * @return array of counts of the knowledge sum
+     */
+    public static int[] writeDistributionOfKnowledgeCount(Agent[] agents) {
+        int[] distribution = distributionOfKnowledgeCount(agents);
+
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < distribution.length; i++) {
+                sb.append(String.format("%d\t", distribution[i]));
+            }
+            sb.append(String.format("%n"));
+            distributionWriter.write(sb.toString());
+        } catch (IOException e) {
+            System.out.println("Problem with writing distribution of elements to a file");
+        }
+        
+        return distribution;
+    }
+
+    /**
      * Returns the sums of knowledge elements of all the the agents.
      * 
      * @param agents array of agents
      * @return array of numbers of knowledge element occurrences indexed by knowledge element number
      */
     public static int[] sumOfEachElement(Agent[] agents) {
-        int maxSize = 0;
-        for (Agent a : agents) {
-            if (a.getKnowledgeSize() > maxSize) {
-                maxSize = a.getKnowledgeSize();
-            }
-        }
+        int maxSize = knowledgeMaxSize(agents);
 
         int[] sums = new int[maxSize];
 
@@ -148,15 +186,18 @@ public class SimulationStatistics {
         new File(OUTPUT_DIRECTORY).mkdirs();
         File sumFile = new File(OUTPUT_DIRECTORY + "/" + SUM_OF_ALL_ELEMENTS_FILENAME);
         File numberFile = new File(OUTPUT_DIRECTORY + "/" + NUMBER_OF_ELEMENTS_FILENAME);
+        File distributionFile = new File(OUTPUT_DIRECTORY + "/" + DISTRIBUTION_FILENAME);
         File sumOfEachFile = new File(OUTPUT_DIRECTORY + "/" + SUMS_OF_EACH_ELEMENT_FILENAME);
 
         sumAllWriter = new BufferedWriter(new FileWriter(sumFile));
         numberWriter = new BufferedWriter(new FileWriter(numberFile));
+        distributionWriter = new BufferedWriter(new FileWriter(distributionFile));
         sumEachWriter = new BufferedWriter(new FileWriter(sumOfEachFile));
 
         try {
             sumAllWriter.write(String.format("Sum of elements%n"));
             numberWriter.write(String.format("Number of elements%n"));
+            distributionWriter.write(String.format("Distribution of elements%n"));
             sumEachWriter.write(String.format("Sums of each element%n"));
         } catch (IOException exc) {
             System.out.println("Problem with writing initial content to a file");
@@ -171,10 +212,24 @@ public class SimulationStatistics {
         try {
             sumAllWriter.close();
             numberWriter.close();
+            distributionWriter.close();
             sumEachWriter.close();
         } catch (IOException exc) {
             System.out.println("Problem with closing output files");
         }
+    }
+
+    /**
+     * Returns the maximal knowledge set size of all the agents.
+     */
+    private static int knowledgeMaxSize(Agent[] agents) {
+        int maxSize = 0;
+        for (Agent a : agents) {
+            if (a.getKnowledgeSize() > maxSize) {
+                maxSize = a.getKnowledgeSize();
+            }
+        }
+        return maxSize;
     }
 
 }
