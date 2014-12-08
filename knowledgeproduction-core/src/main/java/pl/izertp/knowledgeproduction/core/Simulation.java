@@ -10,21 +10,21 @@ import java.util.Random;
  */
 public class Simulation implements Runnable {
 
-    private static final int KNOWLEDGE_SIZE = 30;
+    private static final int KNOWLEDGE_SIZE = 100;
 
-    private static final int KNOWLEDGE_BASE_SIZE = 4;
+    private static final int KNOWLEDGE_BASE_SIZE = 8;
 
     private static final int KNOWLEDGE_CONNECTIONS = 1;
 
-    private static final int NUMBER_OF_AGENTS = 5;
+    private static final int NUMBER_OF_AGENTS = 1000;
 
-    private static final int NUMBER_OF_CONNECTIONS = 10;
+    private static final int AVARAGE_AGENT_CONNECTIONS = 2;
 
     private static final double KNOWLEDGE_ELEMENT_PROBABILITY = 0.1;
 
     private static final double PRODUCTION_PROBABILITY = 0.5;
 
-    private static final int NUMBER_OF_ITERATIONS = 100;
+    private static final int NUMBER_OF_ITERATIONS = 1000;
 
     /**
      * Structure of the knowledge for all the agents.
@@ -43,6 +43,8 @@ public class Simulation implements Runnable {
 
     /**
      * Creates new simulation using parameters given as final static fields.
+     * Every knowledge element must be possessed by at least one agent.
+     * If not, the initial knowledge distribution draw is repeated.
      */
     public Simulation() {
         knowledgeStructure = new KnowledgeStructure(KNOWLEDGE_BASE_SIZE, KNOWLEDGE_SIZE, KNOWLEDGE_CONNECTIONS);
@@ -57,7 +59,8 @@ public class Simulation implements Runnable {
                 agents[i] = new Agent(knowledgeStructure, KNOWLEDGE_ELEMENT_PROBABILITY, PRODUCTION_PROBABILITY);
             }
         }
-        agentStructure = new AgentStructure(agents, NUMBER_OF_CONNECTIONS);
+        // every edge is connected to two agents
+        agentStructure = new AgentStructure(agents, (int) (NUMBER_OF_AGENTS / 2.) * AVARAGE_AGENT_CONNECTIONS);
     }
 
     /**
@@ -92,19 +95,19 @@ public class Simulation implements Runnable {
     private void writeStatistics() {
         int totalKnowledge = SimulationStatistics.writeSumOfElements(agents);
         int numberOfDifferentKnowledge = SimulationStatistics.writeNumberOfElements(agents);
-        int[] knowledgeDistribution = SimulationStatistics.writeElementDistribution(agents);
+        int[] knowledgeSums = SimulationStatistics.writeSumOfEachElement(agents);
 
         StringBuilder sb = new StringBuilder();
         sb.append("\nSTATISTICS:\n");
         sb.append(String.format("Total number of knowledge elements: %d\n", totalKnowledge));
         sb.append(String.format("Number of different knowledge elements: %d\n", numberOfDifferentKnowledge));
-        sb.append("Knowledge distribution: \n");
-        for (int i = 0; i < knowledgeDistribution.length; i++) {
+        sb.append("Knowledge sums: \n");
+        for (int i = 0; i < knowledgeSums.length; i++) {
             sb.append(String.format("%d\t", i));
         }
         sb.append("\n");
-        for (int i = 0; i < knowledgeDistribution.length; i++) {
-            sb.append(String.format("%d\t", knowledgeDistribution[i]));
+        for (int i = 0; i < knowledgeSums.length; i++) {
+            sb.append(String.format("%d\t", knowledgeSums[i]));
         }
         System.out.println(sb.toString());
     }

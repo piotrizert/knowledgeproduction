@@ -41,7 +41,7 @@ public class SimulationStatisticsTest {
     }
 
     @Test
-    public void testSumElements() {
+    public void testSumAllElements() {
         int expectedTotal = KNOWLEDGE_SIZE_HALF / 2 + KNOWLEDGE_SIZE_FULL;
         int statisticsTotal = SimulationStatistics.sumOfElements(agents);
         assertEquals("Sum of elements is wrong", expectedTotal, statisticsTotal);
@@ -55,10 +55,10 @@ public class SimulationStatisticsTest {
     }
 
     @Test
-    public void testElementDistribution() {
-        int[] expectedDistribution = new int[] { 2, 2, 2, 2, 1, 0, 0, 0, 0, 0 }; // counted manually
-        int[] statisticsDistribution = SimulationStatistics.elementDistribution(agents);
-        assertArrayEquals("Knowledge distribution is wrong", expectedDistribution, statisticsDistribution);
+    public void testSumEachElement() {
+        int[] expectedSumOfEachElement = new int[] { 2, 2, 2, 2, 1, 0, 0, 0, 0, 0 }; // counted manually
+        int[] statisticsSumOfEachElement = SimulationStatistics.sumOfEachElement(agents);
+        assertArrayEquals("Knowledge sum for elements is wrong", expectedSumOfEachElement, statisticsSumOfEachElement);
     }
 
 }

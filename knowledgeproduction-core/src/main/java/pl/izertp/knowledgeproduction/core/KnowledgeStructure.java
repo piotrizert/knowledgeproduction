@@ -9,7 +9,7 @@ import pl.izertp.knowledgeproduction.hypergraph.HyperGraph;
 import pl.izertp.knowledgeproduction.hypergraph.MixedHyperGraph;
 
 /**
- * Holds the structuro of knowledge - knowledge hypergraph, base knowledge set,
+ * Holds the structure of knowledge - knowledge hypergraph, base knowledge set,
  * method, which creates a random knowledge graph.
  * 
  * @author Piotr Izert
@@ -34,6 +34,12 @@ public class KnowledgeStructure {
     private HyperGraph graph;
 
     /**
+     * An array which holds depth of vertices indexed by vertex numers.
+     * Depth is defined as max(parent depths) + 1.
+     */
+    private int[] depths;
+
+    /**
      * Creates a new KnowledgeStructure object with random-generated knowledge HyperGraph.
      * Generation algorithm:
      * 
@@ -43,6 +49,9 @@ public class KnowledgeStructure {
      *      pairs of already existing (base and non-base) vertices. If a pair is selected 
      *      multiple times, the edge is added only once.
      * </pre>
+     * 
+     * Note that the depth of a vertex is determined when the vertex is added to the graph
+     * and doesn't change when vertices with greater indices are added.
      * 
      * @param baseSize number of basic knowledge elements, from which all other elements can be developed
      * @param size size of the whole knowledge graph
@@ -54,12 +63,19 @@ public class KnowledgeStructure {
         }
         this.baseSize = baseSize;
         this.size = size;
+        this.depths = new int[size];
         this.graph = new MixedHyperGraph(size);
 
         for (int i = baseSize; i < size; i++) {
             for (int j = 0; j < connectionNumber; j++) {
                 int[] randomPair = getRandomPair(i);
                 graph.addEdge(randomPair[0], randomPair[1], i);
+                int parentMaxDepthPlus1 = Math.max(depths[randomPair[0]], depths[randomPair[1]]) + 1;
+                if (depths[i] == 0) {
+                    depths[i] = parentMaxDepthPlus1;
+                } else {
+                    depths[i] = Math.min(depths[i], parentMaxDepthPlus1);
+                }
             }
         }
     }

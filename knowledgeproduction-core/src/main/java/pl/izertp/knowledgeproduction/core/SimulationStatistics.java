@@ -14,19 +14,19 @@ import java.util.Set;
  */
 public class SimulationStatistics {
 
-    private static final String SUM_OF_ELEMENTS_FILENAME = "sumofelements.txt";
+    private static final String SUM_OF_ALL_ELEMENTS_FILENAME = "sumofallelements.txt";
 
     private static final String NUMBER_OF_ELEMENTS_FILENAME = "numberofelements.txt";
 
-    private static final String DISTRIBUTION_OF_ELEMENTS_FILENAME = "distributionofelements.txt";
+    private static final String SUMS_OF_EACH_ELEMENT_FILENAME = "sumsofeachelement.txt";
 
     private static final String OUTPUT_DIRECTORY = "output";
 
-    private static BufferedWriter sumWriter;
+    private static BufferedWriter sumAllWriter;
 
     private static BufferedWriter numberWriter;
 
-    private static BufferedWriter distributionWriter;
+    private static BufferedWriter sumEachWriter;
 
     /**
      * Counts the sum of all the elements in the simulation.
@@ -51,7 +51,7 @@ public class SimulationStatistics {
     public static int writeSumOfElements(Agent[] agents) {
         int sum = SimulationStatistics.sumOfElements(agents);
         try {
-            sumWriter.write(String.format("%d%n", sum));
+            sumAllWriter.write(String.format("%d%n", sum));
         } catch (IOException e) {
             System.out.println("Problem with writing sum of elements to a file");
         }
@@ -93,12 +93,12 @@ public class SimulationStatistics {
     }
 
     /**
-     * Returns the distribution of knowledge elements amongst the agents.
+     * Returns the sums of knowledge elements of all the the agents.
      * 
      * @param agents array of agents
-     * @return array of numbers of knowledge element occurrences indexed by knowledge elements indices
+     * @return array of numbers of knowledge element occurrences indexed by knowledge element number
      */
-    public static int[] elementDistribution(Agent[] agents) {
+    public static int[] sumOfEachElement(Agent[] agents) {
         int maxSize = 0;
         for (Agent a : agents) {
             if (a.getKnowledgeSize() > maxSize) {
@@ -106,37 +106,37 @@ public class SimulationStatistics {
             }
         }
 
-        int[] distribution = new int[maxSize];
+        int[] sums = new int[maxSize];
 
         for (Agent a : agents) {
             for (int i = 0; i < a.getKnowledgeSize(); i++) {
                 if (a.hasKnowledgeElement(i)) {
-                    distribution[i]++;
+                    sums[i]++;
                 }
             }
         }
-        return distribution;
+        return sums;
     }
 
     /**
-     * Writes the distribution of knowledge elements to a file.
+     * Writes the sums of knowledge elements to a file.
      * 
      * @param agents array of agents
      * @return array of numbers of knowledge element occurrences indexed by knowledge elements indices
      */
-    public static int[] writeElementDistribution(Agent[] agents) {
-        int[] distribution = SimulationStatistics.elementDistribution(agents);
+    public static int[] writeSumOfEachElement(Agent[] agents) {
+        int[] sumOfEachElement = SimulationStatistics.sumOfEachElement(agents);
         try {
             StringBuilder sb = new StringBuilder();
-            for (int i = 0; i < distribution.length; i++) {
-                sb.append(String.format("%d\t", distribution[i]));
+            for (int i = 0; i < sumOfEachElement.length; i++) {
+                sb.append(String.format("%d\t", sumOfEachElement[i]));
             }
             sb.append(String.format("%n"));
-            distributionWriter.write(sb.toString());
+            sumEachWriter.write(sb.toString());
         } catch (IOException e) {
-            System.out.println("Problem with writing number of elements to a file");
+            System.out.println("Problem with writing sum of each element to a file");
         }
-        return distribution;
+        return sumOfEachElement;
     }
 
     /**
@@ -146,18 +146,18 @@ public class SimulationStatistics {
      */
     public static void openFiles() throws IOException {
         new File(OUTPUT_DIRECTORY).mkdirs();
-        File sumFile = new File(OUTPUT_DIRECTORY + "/" + SUM_OF_ELEMENTS_FILENAME);
+        File sumFile = new File(OUTPUT_DIRECTORY + "/" + SUM_OF_ALL_ELEMENTS_FILENAME);
         File numberFile = new File(OUTPUT_DIRECTORY + "/" + NUMBER_OF_ELEMENTS_FILENAME);
-        File distributionFile = new File(OUTPUT_DIRECTORY + "/" + DISTRIBUTION_OF_ELEMENTS_FILENAME);
+        File sumOfEachFile = new File(OUTPUT_DIRECTORY + "/" + SUMS_OF_EACH_ELEMENT_FILENAME);
 
-        sumWriter = new BufferedWriter(new FileWriter(sumFile));
+        sumAllWriter = new BufferedWriter(new FileWriter(sumFile));
         numberWriter = new BufferedWriter(new FileWriter(numberFile));
-        distributionWriter = new BufferedWriter(new FileWriter(distributionFile));
+        sumEachWriter = new BufferedWriter(new FileWriter(sumOfEachFile));
 
         try {
-            sumWriter.write(String.format("Sum of elements%n"));
+            sumAllWriter.write(String.format("Sum of elements%n"));
             numberWriter.write(String.format("Number of elements%n"));
-            distributionWriter.write(String.format("Distribution of elements%n"));
+            sumEachWriter.write(String.format("Sums of each element%n"));
         } catch (IOException exc) {
             System.out.println("Problem with writing initial content to a file");
         }
@@ -169,9 +169,9 @@ public class SimulationStatistics {
      */
     public static void closeFiles() {
         try {
-            sumWriter.close();
+            sumAllWriter.close();
             numberWriter.close();
-            distributionWriter.close();
+            sumEachWriter.close();
         } catch (IOException exc) {
             System.out.println("Problem with closing output files");
         }
