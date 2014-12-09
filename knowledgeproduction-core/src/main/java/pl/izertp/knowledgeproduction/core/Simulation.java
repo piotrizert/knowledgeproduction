@@ -74,8 +74,9 @@ public class Simulation implements Runnable {
             return;
         }
 
-        System.out.println("Example agent generated:");
-        System.out.println(agents[0].toString());
+        //System.out.println("Example agent generated:");
+        //System.out.println(agents[0].toString());
+        SimulationStatistics.writeDepthTotal(agents);
         writeStatistics(true);
         for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
             for (int j = 0; j < agents.length; j++) {
@@ -96,8 +97,10 @@ public class Simulation implements Runnable {
         int totalKnowledge = SimulationStatistics.writeSumOfElements(agents);
         int numberOfDifferentKnowledge = SimulationStatistics.writeNumberOfElements(agents);
         int[] distribution = SimulationStatistics.writeDistributionOfKnowledgeCount(agents);
+        int[] depthSums = SimulationStatistics.writeDepthSum(agents);
         int[] knowledgeSums = SimulationStatistics.writeSumOfEachElement(agents);
 
+        //TODO: add depth sum to stdout (or log)
         if (stdout) {
             StringBuilder sb = new StringBuilder();
             sb.append("\nSTATISTICS:\n");

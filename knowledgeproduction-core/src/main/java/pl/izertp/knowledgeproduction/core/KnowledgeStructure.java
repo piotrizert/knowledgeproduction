@@ -106,6 +106,30 @@ public class KnowledgeStructure {
     }
 
     /**
+     * Returns the maximum depth of an element in the structure.
+     * 
+     * @return maximum depth of an element
+     */
+    public int getMaxDepth() {
+        int maxDepth = 0;
+        for (int i = 0; i < depths.length; i++) {
+            if (maxDepth < depths[i])
+                maxDepth = depths[i];
+        }
+        return maxDepth;
+    }
+
+    /**
+     * Return the depth of selected element.
+     * 
+     * @param i element index
+     * @return depthe of the element
+     */
+    public int getElementDepth(int i) {
+        return depths[i];
+    }
+
+    /**
      * Returns a pair of random ints from 0 to max-1
      * 
      * @param max maximum number - 1

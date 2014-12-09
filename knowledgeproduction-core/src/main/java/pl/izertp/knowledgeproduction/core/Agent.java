@@ -26,6 +26,7 @@ public class Agent {
     /**
      * Structure of the knowledge (with the hypergraph).
      */
+    @Getter
     private KnowledgeStructure knowledgeStructure;
 
     /**

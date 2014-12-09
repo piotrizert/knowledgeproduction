@@ -14,21 +14,25 @@ import java.util.Set;
  */
 public class SimulationStatistics {
 
+    private static final String OUTPUT_DIRECTORY = "output";
+
     private static final String SUM_OF_ALL_ELEMENTS_FILENAME = "sumofallelements.txt";
 
     private static final String NUMBER_OF_ELEMENTS_FILENAME = "numberofelements.txt";
 
     private static final String DISTRIBUTION_FILENAME = "distribution.txt";
 
-    private static final String SUMS_OF_EACH_ELEMENT_FILENAME = "sumsofeachelement.txt";
+    private static final String DEPTH_SUM_FILENAME = "depthsum.txt";
 
-    private static final String OUTPUT_DIRECTORY = "output";
+    private static final String SUMS_OF_EACH_ELEMENT_FILENAME = "sumsofeachelement.txt";
 
     private static BufferedWriter sumAllWriter;
 
     private static BufferedWriter numberWriter;
 
     private static BufferedWriter distributionWriter;
+
+    private static BufferedWriter depthWriter;
 
     private static BufferedWriter sumEachWriter;
 
@@ -105,7 +109,7 @@ public class SimulationStatistics {
      */
     public static int[] distributionOfKnowledgeCount(Agent[] agents) {
         int maxSize = knowledgeMaxSize(agents);
-        int[] distribution = new int[maxSize+1];
+        int[] distribution = new int[maxSize + 1];
         for (Agent a : agents) {
             distribution[a.getKnowledgeTotalCount()]++;
         }
@@ -131,12 +135,89 @@ public class SimulationStatistics {
         } catch (IOException e) {
             System.out.println("Problem with writing distribution of elements to a file");
         }
-        
         return distribution;
     }
 
     /**
-     * Returns the sums of knowledge elements of all the the agents.
+     * Counts the sum of elements grouped by element depth.
+     * 
+     * @param agents array of agents
+     * @return sum of elements grouped by element depth
+     */
+    public static int[] depthSum(Agent[] agents) {
+        int maxDepth = 0;
+        for (Agent a : agents) {
+            if (a.getKnowledgeStructure().getMaxDepth() > maxDepth) {
+                maxDepth = a.getKnowledgeStructure().getMaxDepth();
+            }
+        }
+        int[] depthSum = new int[maxDepth + 1];
+        for (Agent a : agents) {
+            for (int i = 0; i < a.getKnowledgeSize(); i++) {
+                if (a.hasKnowledgeElement(i)) {
+                    KnowledgeStructure structure = a.getKnowledgeStructure();
+                    depthSum[structure.getElementDepth(i)]++;
+                }
+            }
+        }
+        return depthSum;
+    }
+
+    /**
+     * Writes the sum of elements grouped by element depth.
+     * 
+     * @param agents array of agents
+     * @return sum of elements grouped by element depth
+     */
+    public static int[] writeDepthSum(Agent[] agents) {
+        int[] depthSums = SimulationStatistics.depthSum(agents);
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < depthSums.length; i++) {
+                sb.append(String.format("%d\t", depthSums[i]));
+            }
+            sb.append(String.format("%n"));
+            depthWriter.write(sb.toString());
+        } catch (IOException e) {
+            System.out.println("Problem with writing sums of elements by depth to a file");
+        }
+        return depthSums;
+    }
+    
+    public static int[] depthTotal(Agent[] agents) {
+        int maxDepth = 0;
+        for (Agent a : agents) {
+            if (a.getKnowledgeStructure().getMaxDepth() > maxDepth) {
+                maxDepth = a.getKnowledgeStructure().getMaxDepth();
+            }
+        }
+        int[] depthTotal = new int[maxDepth + 1];
+        for(Agent a : agents) {
+            KnowledgeStructure structure = a.getKnowledgeStructure();
+            for(int i=0; i<structure.getSize(); i++) {
+                depthTotal[structure.getElementDepth(i)]++;
+            }
+        }        
+        return depthTotal;
+    }
+    
+    public static int[] writeDepthTotal(Agent[] agents) {
+        int[] depthTotal = depthTotal(agents);
+        try {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < depthTotal.length; i++) {
+                sb.append(String.format("%d\t", depthTotal[i]));
+            }
+            sb.append(String.format("%n"));
+            depthWriter.write(sb.toString());
+        } catch (IOException e) {
+            System.out.println("Problem with writing total elements by depth to a file");
+        }
+        return depthTotal;        
+    }
+
+    /**
+     * Returns the sum of each knowledge element.
      * 
      * @param agents array of agents
      * @return array of numbers of knowledge element occurrences indexed by knowledge element number
@@ -157,7 +238,7 @@ public class SimulationStatistics {
     }
 
     /**
-     * Writes the sums of knowledge elements to a file.
+     * Writes the sum of each knowledge element to a file.
      * 
      * @param agents array of agents
      * @return array of numbers of knowledge element occurrences indexed by knowledge elements indices
@@ -187,17 +268,20 @@ public class SimulationStatistics {
         File sumFile = new File(OUTPUT_DIRECTORY + "/" + SUM_OF_ALL_ELEMENTS_FILENAME);
         File numberFile = new File(OUTPUT_DIRECTORY + "/" + NUMBER_OF_ELEMENTS_FILENAME);
         File distributionFile = new File(OUTPUT_DIRECTORY + "/" + DISTRIBUTION_FILENAME);
+        File depthFile = new File(OUTPUT_DIRECTORY + "/" + DEPTH_SUM_FILENAME);
         File sumOfEachFile = new File(OUTPUT_DIRECTORY + "/" + SUMS_OF_EACH_ELEMENT_FILENAME);
 
         sumAllWriter = new BufferedWriter(new FileWriter(sumFile));
         numberWriter = new BufferedWriter(new FileWriter(numberFile));
         distributionWriter = new BufferedWriter(new FileWriter(distributionFile));
+        depthWriter = new BufferedWriter(new FileWriter(depthFile));
         sumEachWriter = new BufferedWriter(new FileWriter(sumOfEachFile));
 
         try {
             sumAllWriter.write(String.format("Sum of elements%n"));
             numberWriter.write(String.format("Number of elements%n"));
             distributionWriter.write(String.format("Distribution of elements%n"));
+            depthWriter.write(String.format("Sum of elements by depth%n"));
             sumEachWriter.write(String.format("Sums of each element%n"));
         } catch (IOException exc) {
             System.out.println("Problem with writing initial content to a file");
@@ -213,6 +297,7 @@ public class SimulationStatistics {
             sumAllWriter.close();
             numberWriter.close();
             distributionWriter.close();
+            depthWriter.close();
             sumEachWriter.close();
         } catch (IOException exc) {
             System.out.println("Problem with closing output files");
