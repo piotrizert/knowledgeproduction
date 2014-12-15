@@ -130,12 +130,38 @@ public class SimulationStatistics {
             for (int i = 0; i < distribution.length; i++) {
                 sb.append(String.format("%d\t", distribution[i]));
             }
+            double variance = variance(distribution);
+            sb.append(String.format("%f\t%f", variance, Math.sqrt(variance)));
             sb.append(String.format("%n"));
             distributionWriter.write(sb.toString());
         } catch (IOException e) {
             System.out.println("Problem with writing distribution of elements to a file");
         }
         return distribution;
+    }
+
+    /**
+     * Calculates the variance of distribution.
+     * 
+     * @param distribution distribution
+     * @return variance
+     */
+    public static double variance(int[] distribution) {
+        int agentCount = 0;
+        for(int dist: distribution) {
+            agentCount+=dist;
+        }
+        
+        int sum = 0;
+        for (int i = 0; i < distribution.length; i++) {
+            sum += i * distribution[i];
+        }
+        double average = (double) sum / agentCount;
+        double variance = 0;
+        for (int i = 0; i < distribution.length; i++) {
+            variance += (distribution[i] * (i - average) * (i - average));
+        }
+        return variance / agentCount;
     }
 
     /**
@@ -164,7 +190,7 @@ public class SimulationStatistics {
     }
 
     /**
-     * Writes the sum of elements grouped by element depth.
+     * Writes the sum of elements grouped by element depth at particular moment.
      * 
      * @param agents array of agents
      * @return sum of elements grouped by element depth
@@ -183,24 +209,26 @@ public class SimulationStatistics {
         }
         return depthSums;
     }
-    
+
+    /**
+     * Calculate sum of elements available to obtain grouped by depth.
+     * This value doesn't change over time.
+     * 
+     * @param agents array of agents
+     * @return array of total number of elements possible to obtain indexed by element depth
+     */
     public static int[] depthTotal(Agent[] agents) {
-        int maxDepth = 0;
-        for (Agent a : agents) {
-            if (a.getKnowledgeStructure().getMaxDepth() > maxDepth) {
-                maxDepth = a.getKnowledgeStructure().getMaxDepth();
-            }
-        }
+        int maxDepth = knowledgeMaxDepth(agents);
         int[] depthTotal = new int[maxDepth + 1];
-        for(Agent a : agents) {
+        for (Agent a : agents) {
             KnowledgeStructure structure = a.getKnowledgeStructure();
-            for(int i=0; i<structure.getSize(); i++) {
+            for (int i = 0; i < structure.getSize(); i++) {
                 depthTotal[structure.getElementDepth(i)]++;
             }
-        }        
+        }
         return depthTotal;
     }
-    
+
     public static int[] writeDepthTotal(Agent[] agents) {
         int[] depthTotal = depthTotal(agents);
         try {
@@ -213,7 +241,7 @@ public class SimulationStatistics {
         } catch (IOException e) {
             System.out.println("Problem with writing total elements by depth to a file");
         }
-        return depthTotal;        
+        return depthTotal;
     }
 
     /**
@@ -315,6 +343,19 @@ public class SimulationStatistics {
             }
         }
         return maxSize;
+    }
+
+    /**
+     * Returns the maximum depth of all elements in all knowledge sets of agents'.
+     */
+    private static int knowledgeMaxDepth(Agent agents[]) {
+        int maxDepth = 0;
+        for (Agent a : agents) {
+            if (a.getKnowledgeStructure().getMaxDepth() > maxDepth) {
+                maxDepth = a.getKnowledgeStructure().getMaxDepth();
+            }
+        }
+        return maxDepth;
     }
 
 }

@@ -2,11 +2,14 @@ package pl.izertp.knowledgeproduction.core;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Before;
 import org.junit.Test;
 
 public class SimulationStatisticsTest {
+
+    private static double EPS = 1E-10;
 
     private static final int KNOWLEDGE_SIZE_EMPTY = 10;
 
@@ -59,6 +62,17 @@ public class SimulationStatisticsTest {
         int[] expectedSumOfEachElement = new int[] { 2, 2, 2, 2, 1, 0, 0, 0, 0, 0 }; // counted manually
         int[] statisticsSumOfEachElement = SimulationStatistics.sumOfEachElement(agents);
         assertArrayEquals("Knowledge sum for elements is wrong", expectedSumOfEachElement, statisticsSumOfEachElement);
+    }
+
+    @Test
+    public void testVariance() {
+        int[] constDistribution = new int[] { 0, 0, 5, 0 };
+        double variance = SimulationStatistics.variance(constDistribution);
+        assertTrue("Variance of constant distribution should be equal 0", variance < EPS);
+
+        int[] variance1Distribution = new int[] { 0, 0, 0, 17, 0, 17 };
+        variance = SimulationStatistics.variance(variance1Distribution);
+        assertTrue("Variance calculated wrong", Math.abs(variance - 1) < EPS);
     }
 
 }
