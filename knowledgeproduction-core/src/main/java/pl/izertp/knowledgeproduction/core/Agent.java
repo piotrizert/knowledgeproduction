@@ -1,8 +1,6 @@
 package pl.izertp.knowledgeproduction.core;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
 import java.util.Set;
 
@@ -11,7 +9,7 @@ import lombok.Setter;
 
 /**
  * A class of a single agent - an unit which can develop knowledge and propagate knowledge
- * to other agents. 
+ * to other agents.
  * 
  * @author Piotr Izert
  */
@@ -50,7 +48,7 @@ public class Agent {
      * Represents current state of agent's knowledge.
      */
     private boolean[] knowledgeSet;
-    
+
     public void setKnowledgeSet(boolean[] knowledgeSet) {
         this.knowledgeSet = knowledgeSet;
         this.knowledgeSize = knowledgeSet.length;
@@ -63,6 +61,15 @@ public class Agent {
     private Set<Integer> possibleElements;
 
     /**
+     * True, if the agent will only share his knowledge in a trade process, i.e.
+     * it will only share his knowledge if it gets a new piece of knowledge in exchange.
+     * False, if the agent will share its knowledge "for free".
+     */
+    @Getter
+    @Setter
+    private boolean trade;
+
+    /**
      * Creates an Agent object.
      * The agent gets randomly selected elements from the set of base elements of given
      * KnowledgeStructure. A chance of selecting any of the base elements is given as
@@ -72,11 +79,12 @@ public class Agent {
      * @param baseElementChance chance at which base elements will be selected ,must be [0,1]
      * @param productionChance chance of producing knowledge == (1 - propagationChance), must be [0,1]
      */
-    public Agent(KnowledgeStructure knowledgeStructure, double baseElementChance, double productionChance) {
+    public Agent(KnowledgeStructure knowledgeStructure, double baseElementChance, double productionChance, double tradeProbability) {
         // TODO: check args 0-1
         this.knowledgeStructure = knowledgeStructure;
         this.knowledgeSize = knowledgeStructure.getSize();
         this.productionChance = productionChance;
+        this.trade = tradeProbability > new Random().nextDouble();
         knowledgeSet = new boolean[knowledgeSize];
 
         // set the initial knowledge
@@ -143,7 +151,7 @@ public class Agent {
      * @return index of produced element, -1, if nothing was produced
      */
     public int produceKnowledge() {
-        Integer element = getRandomSetElement(possibleElements);
+        Integer element = Utils.getRandomSetElement(possibleElements);
         if (element != null) {
             this.addKnowledgeElement(element);
             possibleElements.remove(element);
@@ -157,8 +165,8 @@ public class Agent {
      * 
      * @return list of knowledge elements this agent has
      */
-    public List<Integer> getHaveKnowledge() {
-        List<Integer> haveKnowledge = new ArrayList<Integer>();
+    public Set<Integer> getHaveKnowledge() {
+        Set<Integer> haveKnowledge = new HashSet<Integer>();
         for (int i = 0; i < knowledgeSize; i++) {
             if (knowledgeSet[i])
                 haveKnowledge.add(i);
@@ -171,8 +179,8 @@ public class Agent {
      * 
      * @return list of knowledge elements this agent doesnt have
      */
-    public List<Integer> getDoesntHaveKnowledge() {
-        List<Integer> doesntHaveKnowledge = new ArrayList<Integer>();
+    public Set<Integer> getDoesntHaveKnowledge() {
+        Set<Integer> doesntHaveKnowledge = new HashSet<Integer>();
         for (int i = 0; i < knowledgeSize; i++) {
             if (!knowledgeSet[i])
                 doesntHaveKnowledge.add(i);
@@ -189,7 +197,7 @@ public class Agent {
     public boolean hasKnowledgeElement(int i) {
         return knowledgeSet[i];
     }
-    
+
     /**
      * Returns total number of agent's knowledge elements.
      * 
@@ -218,23 +226,4 @@ public class Agent {
         return sb.toString();
     }
 
-    /**
-     * Returns a randomly chosen element from a set.
-     * 
-     * @param set a set from which to choose
-     * @return chosen element, null if set is empty
-     */
-    private <T> T getRandomSetElement(Set<T> set) {
-        int size = set.size();
-        if (size == 0)
-            return null;
-        int index = new Random().nextInt(size);
-        int i = 0;
-        for (T obj : set) {
-            if (i == index)
-                return obj;
-            i = i + 1;
-        }
-        throw new IllegalStateException("This piece of code should never be reached");
-    }
 }

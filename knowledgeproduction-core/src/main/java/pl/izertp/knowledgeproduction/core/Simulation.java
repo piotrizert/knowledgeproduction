@@ -18,6 +18,8 @@ public class Simulation implements Runnable {
 
     private static final int NUMBER_OF_AGENTS = 1000;
 
+    private static final double TRADE_PROBABILITY = 0.5;
+
     private static final int AVARAGE_AGENT_CONNECTIONS = 5;
 
     private static final double KNOWLEDGE_ELEMENT_PROBABILITY = 0.1;
@@ -56,7 +58,7 @@ public class Simulation implements Runnable {
 
             agents = new Agent[NUMBER_OF_AGENTS];
             for (int i = 0; i < NUMBER_OF_AGENTS; i++) {
-                agents[i] = new Agent(knowledgeStructure, KNOWLEDGE_ELEMENT_PROBABILITY, PRODUCTION_PROBABILITY);
+                agents[i] = new Agent(knowledgeStructure, KNOWLEDGE_ELEMENT_PROBABILITY, PRODUCTION_PROBABILITY, TRADE_PROBABILITY);
             }
         }
         // every edge is connected to two agents

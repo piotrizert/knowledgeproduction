@@ -2,8 +2,10 @@ package pl.izertp.knowledgeproduction.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import lombok.Setter;
 import pl.izertp.knowledgeproduction.graph.AdjacencyListGraph;
@@ -88,7 +90,10 @@ public class AgentStructure {
         if (random < productionChance) {
             return produceKnowledge(agentIndex);
         } else {
-            return propagateKnowledge(agentIndex);
+            if (agents[agentIndex].isTrade())
+                return tradeKnowledge(agentIndex);
+            else
+                return propagateKnowledge(agentIndex);
         }
     }
 
@@ -101,10 +106,10 @@ public class AgentStructure {
     private boolean produceKnowledge(int agentIndex) {
         int producedKnowledge = agents[agentIndex].produceKnowledge();
         if (producedKnowledge < 0) {
-            System.out.println(String.format("Agent %d didn't produce knowledge", agentIndex));
+            // System.out.println(String.format("Agent %d didn't produce knowledge", agentIndex));
             return false;
         } else {
-            System.out.println(String.format("Agent %d produced knowledge element %d", agentIndex, producedKnowledge));
+            // System.out.println(String.format("Agent %d produced knowledge element %d", agentIndex, producedKnowledge));
             return true;
         }
     }
@@ -112,7 +117,7 @@ public class AgentStructure {
     /**
      * Propagates the knowledge of selected agent to his randomly selected neighbor.
      * Knowledge element to share is selected randomly.
-     * If the naighbor already has this element, nothing happens.
+     * If the neighbor already has this element, nothing happens.
      * 
      * @param agentIndex index of agent, which will try to share his knowledge with a random neighbor
      * @return true, if the knowledge was passed
@@ -123,26 +128,60 @@ public class AgentStructure {
         Agent propagatingAgent = agents[agentIndex];
         int neighborCount = neighborList[agentIndex].size();
         if (neighborCount == 0) {
-            System.out.println(String.format("Agent %d doesn't have any neighbors, so he doesn't propagate knowledge", agentIndex));
+            // System.out.println(String.format("Agent %d doesn't have any neighbors, so he doesn't propagate knowledge", agentIndex));
+            return false;
+        }
+        int randomNeighborIndex = random.nextInt(neighborCount);
+        Agent randomNeighbor = neighborList[agentIndex].get(randomNeighborIndex);
+        Set<Integer> knowledgeToPropagate = propagatingAgent.getHaveKnowledge();
+        if (knowledgeToPropagate.size() == 0) {
+            // System.out.println(String.format("Agent %d doesn't have any knowledge", agentIndex));
             return false;
         }
 
-        int randomNeighborIndex = random.nextInt(neighborCount);
-        Agent randomNeighbor = neighborList[agentIndex].get(randomNeighborIndex);
-        List<Integer> knowledgeToPropagate = propagatingAgent.getHaveKnowledge();
-        if(knowledgeToPropagate.size() == 0) {
-            System.out.println(String.format("Agent %d doesn't have any knowledge", agentIndex));
-            return false;
-        }
-        int randomKnowledgeElementIndex = random.nextInt(knowledgeToPropagate.size());
-        int randomKnowledgeElement = knowledgeToPropagate.get(randomKnowledgeElementIndex);
+        int randomKnowledgeElement = Utils.getRandomSetElement(knowledgeToPropagate);
         boolean effect = !(randomNeighbor.addKnowledgeElement(randomKnowledgeElement));
         if (effect) {
-            System.out.println(String.format("Agent %d passed some knowledge to agent %d", agentIndex, Arrays.asList(agents).indexOf(randomNeighbor)));
+            // System.out.println(String.format("Agent %d passed some knowledge to agent %d", agentIndex, Arrays.asList(agents).indexOf(randomNeighbor)));
         } else {
-            System.out.println(String.format("Agent %d didn't pass any knowledge to agent %d", agentIndex, Arrays.asList(agents).indexOf(randomNeighbor)));
+            // System.out.println(String.format("Agent %d didn't pass any knowledge to agent %d", agentIndex, Arrays.asList(agents).indexOf(randomNeighbor)));
         }
         return effect;
+    }
+
+    public boolean tradeKnowledge(int agentIndex) {
+        Random random = new Random();
+
+        Agent tradingAgent = agents[agentIndex];
+        int neighborCount = neighborList[agentIndex].size();
+        if (neighborCount == 0) {
+            // System.out.println(String.format("Agent %d doesn't have any neighbors, so he doesn't trade knowledge", agentIndex));
+            return false;
+        }
+
+        List<Agent> tradeNeighbors = new ArrayList<Agent>();
+        for (Agent a : neighborList[agentIndex]) {
+            if (a.isTrade())
+                tradeNeighbors.add(a);
+        }
+        if (tradeNeighbors.size() == 0) {
+            // System.out.println(String.format("Agent %d doesn't have any trade neighbors, so he doesn't trade knowledge", agentIndex));
+            return false;
+        }
+        Collections.shuffle(tradeNeighbors);
+        Agent partnerAgent = tradeNeighbors.get(0);
+        
+        int[] knowledgeToTrade = getRandomPossibleTrade(tradingAgent, partnerAgent);
+        if(knowledgeToTrade == null) {
+            //System.out.println(String.format("Agent %d doesn't trade knowledge, because he has nothing to trade with his neighbor", agentIndex));
+            return false;
+        }
+        
+        boolean tradeGot = tradingAgent.addKnowledgeElement(knowledgeToTrade[1]);
+        boolean partnerGot = partnerAgent.addKnowledgeElement(knowledgeToTrade[0]);
+        if(tradeGot || partnerGot)
+            throw new IllegalStateException("Trade didnt take place");
+        return true;
     }
 
     /**
@@ -158,6 +197,27 @@ public class AgentStructure {
             agentList.add(agents[i]);
         }
         return agentList;
+    }
+
+    private int[] getRandomPossibleTrade(Agent tradingAgent, Agent partnerAgent) {
+        List<Integer> possibleTrades = new ArrayList<Integer>();
+        List<Integer> possiblePartner = new ArrayList<Integer>();
+        Set<Integer> tradingSet = tradingAgent.getHaveKnowledge();
+        Set<Integer> partnerSet = partnerAgent.getHaveKnowledge();
+        for (int trade : tradingSet) {
+            if (!partnerSet.contains(trade))
+                possibleTrades.add(trade);
+        }
+        for (int partner : partnerSet) {
+            if (!tradingSet.contains(partner))
+                possiblePartner.add(partner);
+        }
+        if(possibleTrades.size() == 0 || possiblePartner.size() == 0) {
+            return null;
+        }
+        Collections.shuffle(possibleTrades);
+        Collections.shuffle(possiblePartner);
+        return new int[] { possibleTrades.get(0), possiblePartner.get(0) };
     }
 
 }
