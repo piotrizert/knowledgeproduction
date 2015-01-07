@@ -1,7 +1,6 @@
 package pl.izertp.knowledgeproduction.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
@@ -149,10 +148,20 @@ public class AgentStructure {
         return effect;
     }
 
-    public boolean tradeKnowledge(int agentIndex) {
-        Random random = new Random();
-
+    /**
+     * Performs a trade process of given agent. Looks for neighboring trading agents,
+     * picks a random one and checks, if there are any possible trades. If there are, picks a random trade and performs it.
+     * 
+     * @param agentIndex index of agent, which will trade
+     * @return true, if trade took place
+     * @throws IllegalStateException when given agent is not a trading agent
+     */
+    public boolean tradeKnowledge(int agentIndex) {        
         Agent tradingAgent = agents[agentIndex];
+        if(!tradingAgent.isTrade()) {
+            throw new IllegalStateException(String.format("Agent %d is not a trading agent", agentIndex));
+        }
+        
         int neighborCount = neighborList[agentIndex].size();
         if (neighborCount == 0) {
             // System.out.println(String.format("Agent %d doesn't have any neighbors, so he doesn't trade knowledge", agentIndex));
@@ -170,16 +179,16 @@ public class AgentStructure {
         }
         Collections.shuffle(tradeNeighbors);
         Agent partnerAgent = tradeNeighbors.get(0);
-        
+
         int[] knowledgeToTrade = getRandomPossibleTrade(tradingAgent, partnerAgent);
-        if(knowledgeToTrade == null) {
-            //System.out.println(String.format("Agent %d doesn't trade knowledge, because he has nothing to trade with his neighbor", agentIndex));
+        if (knowledgeToTrade == null) {
+            // System.out.println(String.format("Agent %d doesn't trade knowledge, because he has nothing to trade with his neighbor", agentIndex));
             return false;
         }
-        
+
         boolean tradeGot = tradingAgent.addKnowledgeElement(knowledgeToTrade[1]);
         boolean partnerGot = partnerAgent.addKnowledgeElement(knowledgeToTrade[0]);
-        if(tradeGot || partnerGot)
+        if (tradeGot || partnerGot)
             throw new IllegalStateException("Trade didnt take place");
         return true;
     }
@@ -199,20 +208,29 @@ public class AgentStructure {
         return agentList;
     }
 
+    /**
+     * Returns a pair of elements, which can be traded. First element in returned array is
+     * an element from 'trading' agent's knowledge set and second element of the array is
+     * an element from its partner's set.
+     * 
+     * @param tradingAgent agent, which wants to trade his knowledge
+     * @param partnerAgent agent, with which the knowledge is traded 
+     * @return 2-element array of indices
+     */
     private int[] getRandomPossibleTrade(Agent tradingAgent, Agent partnerAgent) {
         List<Integer> possibleTrades = new ArrayList<Integer>();
         List<Integer> possiblePartner = new ArrayList<Integer>();
         Set<Integer> tradingSet = tradingAgent.getHaveKnowledge();
         Set<Integer> partnerSet = partnerAgent.getHaveKnowledge();
-        for (int trade : tradingSet) {
-            if (!partnerSet.contains(trade))
-                possibleTrades.add(trade);
+        for (int tradeElement : tradingSet) {
+            if (!partnerSet.contains(tradeElement))
+                possibleTrades.add(tradeElement);
         }
-        for (int partner : partnerSet) {
-            if (!tradingSet.contains(partner))
-                possiblePartner.add(partner);
+        for (int partnerElement : partnerSet) {
+            if (!tradingSet.contains(partnerElement))
+                possiblePartner.add(partnerElement);
         }
-        if(possibleTrades.size() == 0 || possiblePartner.size() == 0) {
+        if (possibleTrades.size() == 0 || possiblePartner.size() == 0) {
             return null;
         }
         Collections.shuffle(possibleTrades);
