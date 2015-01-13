@@ -14,6 +14,8 @@ import java.util.Set;
  */
 public class SimulationStatistics {
 
+    private static final int MAX_DEPTH = 15;
+
     private static final String OUTPUT_DIRECTORY = "output";
 
     private static final String SUM_OF_ALL_ELEMENTS_FILENAME = "sumofallelements.txt";
@@ -26,6 +28,8 @@ public class SimulationStatistics {
 
     private static final String SUMS_OF_EACH_ELEMENT_FILENAME = "sumsofeachelement.txt";
 
+    private static final String ALL_STATS_FILENAME = "allstats.txt";
+
     private static BufferedWriter sumAllWriter;
 
     private static BufferedWriter numberWriter;
@@ -35,6 +39,8 @@ public class SimulationStatistics {
     private static BufferedWriter depthWriter;
 
     private static BufferedWriter sumEachWriter;
+
+    private static BufferedWriter allStatsWriter;
 
     /**
      * Counts the sum of all the elements in the simulation.
@@ -148,10 +154,10 @@ public class SimulationStatistics {
      */
     public static double variance(int[] distribution) {
         int agentCount = 0;
-        for(int dist: distribution) {
-            agentCount+=dist;
+        for (int dist : distribution) {
+            agentCount += dist;
         }
-        
+
         int sum = 0;
         for (int i = 0; i < distribution.length; i++) {
             sum += i * distribution[i];
@@ -286,6 +292,57 @@ public class SimulationStatistics {
         return sumOfEachElement;
     }
 
+    public static void writeAllStatsHeader(Agent[] agents) {
+        int[] depthTotal = depthTotal(agents);
+        try {
+            StringBuilder sb = new StringBuilder();
+            sb.append("\t\t");
+            int i;
+            for (i = 0; i < depthTotal.length; i++) {
+                sb.append(String.format("%d\t", depthTotal[i]));
+            }
+            for (; i <= MAX_DEPTH; i++) {
+                sb.append("\t");
+            }
+            sb.append(String.format("%n"));
+            allStatsWriter.write(sb.toString());
+        } catch (IOException e) {
+            System.out.println("Problem with writing total elements by depth to a file");
+        }
+    }
+
+    public static void writeAllStats(Agent[] agents) {
+        int sum = sumOfElements(agents);
+        int number = numberOfElements(agents);
+        int[] depth = depthSum(agents);
+        int[] distribution = distributionOfKnowledgeCount(agents);
+        double variance = variance(distribution);
+
+        StringBuilder sb = new StringBuilder();
+        sb.append(String.format("%d\t", sum));
+        sb.append(String.format("%d\t", number));
+
+        int i;
+        for (i = 0; i < depth.length; i++) {
+            sb.append(String.format("%d\t", depth[i]));
+        }
+        for (; i <= MAX_DEPTH; i++) {
+            sb.append("\t");
+        }
+        sb.append("\t");
+
+        for (int ii = 0; ii < distribution.length; ii++) {
+            sb.append(String.format("%d\t", distribution[ii]));
+        }
+        sb.append(String.format("%f\t%f", variance, Math.sqrt(variance)));
+        sb.append(String.format("%n"));
+        try {
+            allStatsWriter.write(sb.toString());
+        } catch (IOException exc) {
+            System.out.println("Could not write all stats");
+        }
+    }
+
     /**
      * Opens all the output files and writes their initial content.
      * 
@@ -298,12 +355,14 @@ public class SimulationStatistics {
         File distributionFile = new File(OUTPUT_DIRECTORY + "/" + DISTRIBUTION_FILENAME);
         File depthFile = new File(OUTPUT_DIRECTORY + "/" + DEPTH_SUM_FILENAME);
         File sumOfEachFile = new File(OUTPUT_DIRECTORY + "/" + SUMS_OF_EACH_ELEMENT_FILENAME);
+        File allStatsFile = new File(OUTPUT_DIRECTORY + "/" + ALL_STATS_FILENAME);
 
         sumAllWriter = new BufferedWriter(new FileWriter(sumFile));
         numberWriter = new BufferedWriter(new FileWriter(numberFile));
         distributionWriter = new BufferedWriter(new FileWriter(distributionFile));
         depthWriter = new BufferedWriter(new FileWriter(depthFile));
         sumEachWriter = new BufferedWriter(new FileWriter(sumOfEachFile));
+        allStatsWriter = new BufferedWriter(new FileWriter(allStatsFile));
 
         try {
             sumAllWriter.write(String.format("Sum of elements%n"));
@@ -327,6 +386,7 @@ public class SimulationStatistics {
             distributionWriter.close();
             depthWriter.close();
             sumEachWriter.close();
+            allStatsWriter.close();
         } catch (IOException exc) {
             System.out.println("Problem with closing output files");
         }

@@ -3,6 +3,8 @@ package pl.izertp.knowledgeproduction.core;
 import java.io.IOException;
 import java.util.Random;
 
+import lombok.Getter;
+
 /**
  * Implements runnable method, which does the simulation.
  * 
@@ -16,17 +18,17 @@ public class Simulation implements Runnable {
 
     private static final int KNOWLEDGE_CONNECTIONS = 1;
 
-    private static final int NUMBER_OF_AGENTS = 1000;
-
-    private static final double TRADE_PROBABILITY = 0.5;
-
-    private static final int AVARAGE_AGENT_CONNECTIONS = 5;
-
     private static final double KNOWLEDGE_ELEMENT_PROBABILITY = 0.1;
 
-    private static final double PRODUCTION_PROBABILITY = 0.5;
+    private static final int NUMBER_OF_AGENTS = 1000;
 
-    private static final int NUMBER_OF_ITERATIONS = 1000;
+    private static final int AVARAGE_AGENT_CONNECTIONS = 10;
+
+    private static final double PRODUCTION_PROBABILITY = 0.1;
+
+    private static final int NUMBER_OF_ITERATIONS = 20000;
+
+    public static final double TRADE_PROBABILITY = 1;
 
     /**
      * Structure of the knowledge for all the agents.
@@ -41,6 +43,7 @@ public class Simulation implements Runnable {
     /**
      * Array of agents.
      */
+    @Getter
     private Agent[] agents;
 
     /**
@@ -48,7 +51,7 @@ public class Simulation implements Runnable {
      * Every knowledge element must be possessed by at least one agent.
      * If not, the initial knowledge distribution draw is repeated.
      */
-    public Simulation() {
+    public Simulation(double tradeProbability) {
         knowledgeStructure = new KnowledgeStructure(KNOWLEDGE_BASE_SIZE, KNOWLEDGE_SIZE, KNOWLEDGE_CONNECTIONS);
 
         // knowledge draw is repeated, if there is a base element which is not obtained by any agent
@@ -58,7 +61,7 @@ public class Simulation implements Runnable {
 
             agents = new Agent[NUMBER_OF_AGENTS];
             for (int i = 0; i < NUMBER_OF_AGENTS; i++) {
-                agents[i] = new Agent(knowledgeStructure, KNOWLEDGE_ELEMENT_PROBABILITY, PRODUCTION_PROBABILITY, TRADE_PROBABILITY);
+                agents[i] = new Agent(knowledgeStructure, KNOWLEDGE_ELEMENT_PROBABILITY, PRODUCTION_PROBABILITY, tradeProbability);
             }
         }
         // every edge is connected to two agents
@@ -76,13 +79,16 @@ public class Simulation implements Runnable {
             return;
         }
 
-        SimulationStatistics.writeDepthTotal(agents);
-        writeStatistics(true);
+        // SimulationStatistics.writeDepthTotal(agents);
+        // writeStatistics(true);
+        SimulationStatistics.writeAllStatsHeader(agents);
+        SimulationStatistics.writeAllStats(agents);
         for (int i = 0; i < NUMBER_OF_ITERATIONS; i++) {
             for (int j = 0; j < agents.length; j++) {
                 agentStructure.makeStep(randomAgentIndex());
             }
-            writeStatistics(false);
+            // writeStatistics(false);
+            SimulationStatistics.writeAllStats(agents);
         }
 
         SimulationStatistics.closeFiles();
