@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>pl.izertp.knowledgeproduction</groupId>
 		<artifactId>knowledgeproduction</artifactId>
-		<version>0.2</version>
+		<version>0.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>knowledgeproduction-core</artifactId>
 	<name>Knowledge Production - Core</name>
