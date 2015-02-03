@@ -11,7 +11,7 @@ public class ApplicationLauncher {
      * Main method of the application. Starts the simulation with given parameters.
      */
     public static void main(String[] args) {
-        new Simulation(Simulation.TRADE_PROBABILITY).run();
+        new Simulation().run();
     }
 
 }

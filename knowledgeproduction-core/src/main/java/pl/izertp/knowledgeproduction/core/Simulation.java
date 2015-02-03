@@ -20,17 +20,17 @@ public class Simulation implements Runnable {
 
     private static final int KNOWLEDGE_CONNECTIONS = 1;
 
-    private static final double KNOWLEDGE_ELEMENT_PROBABILITY = 0.1;
-
     private static final int NUMBER_OF_AGENTS = 1000;
+
+    private static final double KNOWLEDGE_ELEMENT_PROBABILITY = 0.1;
 
     private static final int AVARAGE_AGENT_CONNECTIONS = 1;
 
     private static final double PRODUCTION_PROBABILITY = 0.2;
 
-    private static final int NUMBER_OF_ITERATIONS = 20000;
+    private static final double TRADE_PROBABILITY = 0;
 
-    public static final double TRADE_PROBABILITY = 0;
+    private static final int NUMBER_OF_ITERATIONS = 20000;
 
     /**
      * Structure of the knowledge for all the agents.
@@ -47,6 +47,10 @@ public class Simulation implements Runnable {
      */
     @Getter
     private Agent[] agents;
+
+    public Simulation() {
+        this(TRADE_PROBABILITY);
+    }
 
     /**
      * Creates new simulation using parameters given as final static fields.
