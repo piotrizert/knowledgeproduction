@@ -26,6 +26,11 @@ public class MixedHyperGraph implements HyperGraph {
     private int vertexNumber;
 
     /**
+     * Array of lists of pairs of vertices, which are the parents of the vertex.
+     */
+    private List<Integer[]>[] parents;
+
+    /**
      * Creates a new, empty MixedHyperGraph.
      * 
      * @param n number of vertices
@@ -34,6 +39,10 @@ public class MixedHyperGraph implements HyperGraph {
     @SuppressWarnings("unchecked")
     public MixedHyperGraph(int n) {
         vertexNumber = n;
+        parents = new List[n];
+        for (int i = 0; i < n; i++) {
+            parents[i] = new ArrayList<Integer[]>();
+        }
         edges = new List[n][n];
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < n; j++) {
@@ -53,6 +62,7 @@ public class MixedHyperGraph implements HyperGraph {
         }
         edges[from1][from2].add(to);
         edges[from2][from1].add(to);
+        parents[to].add(new Integer[] { from1, from2 });
         return false;
     }
 
@@ -62,6 +72,10 @@ public class MixedHyperGraph implements HyperGraph {
 
     public List<Integer> toVertices(int v1, int v2) {
         return edges[v1][v2];
+    }
+
+    public List<Integer[]> getParrents(int v) {
+        return parents[v];
     }
 
     private void checkArgs(int from1, int from2, int to) {

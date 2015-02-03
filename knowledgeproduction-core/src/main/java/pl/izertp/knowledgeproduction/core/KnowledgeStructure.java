@@ -128,6 +128,10 @@ public class KnowledgeStructure {
     public int getElementDepth(int i) {
         return depths[i];
     }
+    
+    public List<Integer[]> getParents(int i) {
+        return ((MixedHyperGraph)graph).getParrents(i);
+    }
 
     /**
      * Returns a pair of random ints from 0 to max-1

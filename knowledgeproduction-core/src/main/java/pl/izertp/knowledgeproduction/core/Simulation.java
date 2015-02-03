@@ -1,7 +1,9 @@
 package pl.izertp.knowledgeproduction.core;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Random;
+import java.util.Set;
 
 import lombok.Getter;
 
@@ -22,13 +24,13 @@ public class Simulation implements Runnable {
 
     private static final int NUMBER_OF_AGENTS = 1000;
 
-    private static final int AVARAGE_AGENT_CONNECTIONS = 10;
+    private static final int AVARAGE_AGENT_CONNECTIONS = 1;
 
-    private static final double PRODUCTION_PROBABILITY = 0.1;
+    private static final double PRODUCTION_PROBABILITY = 0.2;
 
     private static final int NUMBER_OF_ITERATIONS = 20000;
 
-    public static final double TRADE_PROBABILITY = 1;
+    public static final double TRADE_PROBABILITY = 0;
 
     /**
      * Structure of the knowledge for all the agents.
@@ -72,6 +74,7 @@ public class Simulation implements Runnable {
      * Runnable interface method - runs the simulation.
      */
     public void run() {
+        //System.out.println("Start run method");
         try {
             SimulationStatistics.openFiles();
         } catch (IOException e) {
@@ -92,7 +95,7 @@ public class Simulation implements Runnable {
         }
 
         SimulationStatistics.closeFiles();
-
+        //verifyEachElementParents();
     }
 
     private int randomAgentIndex() {
@@ -132,6 +135,29 @@ public class Simulation implements Runnable {
             }
             sb.append("\n");
             System.out.println(sb.toString());
+        }
+    }
+
+    private void verifyEachElementParents() {
+        System.out.println("Veryfing parents...");
+        for (int index = 0; index < NUMBER_OF_AGENTS; index++) {
+            Agent agent = agents[index];
+            Set<Integer> agentKnowledge = agent.getHaveKnowledge();
+            for (Integer element : agentKnowledge) {
+                if (knowledgeStructure.getElementDepth(element) == 0) {
+                    continue;
+                }
+                List<Integer[]> parents = knowledgeStructure.getParents(element);
+                if (parents.size() != KNOWLEDGE_CONNECTIONS) {
+                    System.out.println(String.format("Element %d has %d parents", element, parents.size()));
+                }
+                Integer[] parentsArr = parents.get(0);
+                for (int i = 0; i < 2; i++) {
+                    if (!agentKnowledge.contains(parentsArr[i])) {
+                        System.out.println(String.format("No parent %d for element %d", parentsArr[i], element));
+                    }
+                }
+            }
         }
     }
 }

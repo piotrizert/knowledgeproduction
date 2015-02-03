@@ -165,6 +165,7 @@ public class AgentStructure {
         }
         boolean effect = !(randomNeighbor.addKnowledgeElement(elementToPropagate));
         if (effect) {
+            randomNeighbor.getGotFrom()[elementToPropagate] = agentIndex;
             // System.out.println(String.format("Agent %d passed some knowledge to agent %d", agentIndex, Arrays.asList(agents).indexOf(randomNeighbor)));
         } else {
             // System.out.println(String.format("Agent %d didn't pass any knowledge to agent %d", agentIndex, Arrays.asList(agents).indexOf(randomNeighbor)));
@@ -236,7 +237,7 @@ public class AgentStructure {
      * Returns a pair of elements, which can be traded. First element in returned array is
      * an element from 'trading' agent's knowledge set and second element of the array is
      * an element from its partner's set.
-     * 
+     *
      * @param tradingAgent agent, which wants to trade his knowledge
      * @param partnerAgent agent, with which the knowledge is traded
      * @return 2-element array of indices

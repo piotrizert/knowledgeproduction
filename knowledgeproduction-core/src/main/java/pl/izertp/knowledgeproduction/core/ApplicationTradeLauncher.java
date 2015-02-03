@@ -8,7 +8,7 @@ public class ApplicationTradeLauncher {
             Simulation simulation = new Simulation(tradeProbability);
             simulation.run();
             int totalKnowledge = SimulationStatistics.sumOfElements(simulation.getAgents());
-            System.out.println(String.format("Trade: %f Number: %d", tradeProbability, totalKnowledge));
+            System.out.println(String.format("%f\t%d", tradeProbability, totalKnowledge));
         }
 
     }

@@ -68,6 +68,9 @@ public class Agent {
     @Getter
     @Setter
     private boolean trade;
+    
+    @Getter
+    private int[] gotFrom;
 
     /**
      * Creates an Agent object.
@@ -85,7 +88,8 @@ public class Agent {
         this.knowledgeSize = knowledgeStructure.getSize();
         this.productionChance = productionChance;
         this.trade = tradeProbability > new Random().nextDouble();
-        knowledgeSet = new boolean[knowledgeSize];
+        this.gotFrom = new int[knowledgeSize];
+        this.knowledgeSet = new boolean[knowledgeSize];
 
         // set the initial knowledge
         Random random = new Random();
@@ -138,7 +142,7 @@ public class Agent {
             return true;
         }
         knowledgeSet[n] = true;
-        for (int i = 0; i < knowledgeSize; i++) {
+        for (int i : getHaveKnowledge()) {
             possibleElements.addAll(knowledgeStructure.getResultElements(n, i));
         }
         return false;
@@ -155,6 +159,7 @@ public class Agent {
         if (element != null) {
             this.addKnowledgeElement(element);
             possibleElements.remove(element);
+            this.gotFrom[element] = -1;
             return element;
         }
         return -1;
