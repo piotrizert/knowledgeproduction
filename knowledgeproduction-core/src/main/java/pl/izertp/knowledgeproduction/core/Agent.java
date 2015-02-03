@@ -88,7 +88,6 @@ public class Agent {
         this.knowledgeSize = knowledgeStructure.getSize();
         this.productionChance = productionChance;
         this.trade = tradeProbability > new Random().nextDouble();
-        this.gotFrom = new int[knowledgeSize];
         this.knowledgeSet = new boolean[knowledgeSize];
 
         // set the initial knowledge
@@ -116,6 +115,7 @@ public class Agent {
      * Method, which initializes agent's possibleElements set.
      */
     public void initAgent() {
+        this.gotFrom = new int[knowledgeSize];
         possibleElements = new HashSet<Integer>();
         for (int i = 0; i < knowledgeSize; i++) {
             if (!knowledgeSet[i])
